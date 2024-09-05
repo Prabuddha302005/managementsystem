@@ -8,7 +8,7 @@ class StudentProfile(models.Model):
     course_name = models.CharField(max_length=50, null=True, blank=True)
     education = models.CharField(max_length=50, null=True, blank=True)
     remark = models.CharField(max_length=50, null=True, blank=True)
-    image = models.ImageField(upload_to='student_images/', null=True, blank=True)
+    image = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     total_fees = models.FloatField(null=True, blank=True)
     fees_paid = models.FloatField(null=True, blank=True)
     fees_pending = models.FloatField(null=True, blank=True)  # Corrected the typo

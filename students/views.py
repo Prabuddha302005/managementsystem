@@ -25,6 +25,9 @@ def studentProfile(request):
         parent_number = request.POST['parent_number']
         email = request.POST['email']
         education = request.POST['education']
+        image = request.FILES['image']
+ 
+        print(image)
         print(phone, parent_number, email, education)
         # Update the existing User object with the new email
         user = request.user
@@ -36,10 +39,17 @@ def studentProfile(request):
         get_user_details.phone = phone
         get_user_details.parent_number = parent_number
         get_user_details.education = education
+        get_user_details.image = image
+    
         get_user_details.save()
-        
+        print(get_user_details.image.url)
         messages.success(request, 'Your profile has been updated successfully.')
-        # Redirect to the profile page or another appropriate page
+
+        # profile image setup
+        
+        
+
+       
 
     return render(request, "students/profile.html", context=data)
 
