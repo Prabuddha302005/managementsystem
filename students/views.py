@@ -6,7 +6,7 @@ from django.contrib import messages
 
 # Create your views here.
 def StudentHome(request):
-    return render(request, 'students/student_home.html')
+    return render(request, 'students/profile.html')
 
 def studentProfile(request):
     data = {}

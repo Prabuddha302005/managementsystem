@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from employee.models import EmployeeProfile
 from interns.models import InternProfile
 from students.models import StudentProfile
-# Create your views here.
+
 
 def user_login(request):
     if request.method == "POST":
@@ -13,14 +13,12 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
 
         if user is None:
-            # Optionally handle invalid credentials
             print("Wrong Password")
             return render(request, "users/login.html")
 
         # Log in the user
         login(request, user)
 
-        # Check for different profiles
         try:
             # Check for EmployeeProfile
             employee_profile = EmployeeProfile.objects.get(user=user)
@@ -41,7 +39,7 @@ def user_login(request):
             # Check for StudentProfile
             student_profile = StudentProfile.objects.get(user=user)
             if student_profile.role == "Student":
-                return redirect('/student/home')
+                return redirect('/student/profile')
         except StudentProfile.DoesNotExist:
             pass  # Handle the case if StudentProfile does not exist
 
