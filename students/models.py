@@ -11,9 +11,17 @@ class StudentProfile(models.Model):
     image = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     total_fees = models.FloatField(null=True, blank=True)
     fees_paid = models.FloatField(null=True, blank=True)
-    fees_pending = models.FloatField(null=True, blank=True)  # Corrected the typo
-    assignments = models.FileField(upload_to='student_assignments/', blank=True, null=True)
+    fees_pending = models.FloatField(null=True, blank=True)
     role = models.CharField(max_length=20, default="Student")
 
     def __str__(self):
         return f'{self.user.username} Student Profile'
+    
+class StudentsTasks(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Allows multiple tasks for one user
+    task_title = models.CharField(max_length=255)  # You can add a task title or identifier
+    task_description = models.TextField()
+    assignment = models.FileField(upload_to='student_assignments/', max_length=100)
+
+    def __str__(self):
+        return f"Task for {self.user.username}: {self.task_title}"

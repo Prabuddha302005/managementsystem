@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from students.models import StudentProfile
+from students.models import StudentProfile, StudentsTasks
 from django.contrib.auth.models import User
 from django.contrib import messages
 
@@ -46,11 +46,6 @@ def studentProfile(request):
         messages.success(request, 'Your profile has been updated successfully.')
 
         # profile image setup
-        
-        
-
-       
-
     return render(request, "students/profile.html", context=data)
 
 def studentfeesDetails(request):
@@ -60,3 +55,14 @@ def studentfeesDetails(request):
     data['fees'] = get_user_fees   
     return render(request, "students/fees.html", context=data)
 
+def StudentTasks(request):
+    data = {}
+    try:
+        # Retrieve all tasks for the logged-in user
+        get_user_tasks = StudentsTasks.objects.filter(user=request.user)
+        data['tasks'] = get_user_tasks
+        print(get_user_tasks)
+    except StudentsTasks.DoesNotExist:
+        # If no tasks exist, this block will handle the exception
+        data['tasks'] = None
+    return render(request, "students/tasks.html", context=data)
