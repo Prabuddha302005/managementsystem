@@ -10,23 +10,39 @@
         text-align: center;
         margin-top: 20%;
     }
+
+    h5{
+
+    }
 </style>
 
 <div class="container">
     {% if tasks %}
         <h3 class="mt-4">Assigned Tasks:</h3>
-
         <!-- Loop through each task -->
         {% for task in tasks %}
         <div class="card my-3 p-3">
-            <h4>{{ task.task_title }}</h4>
+            <h5>{{ task.task_title }}</h5>
             <p>{{ task.task_description }}</p>
-
-            <!-- File upload for each task -->
-            <div class="input-group mb-3">
-                <input type="file" class="form-control" id="inputGroupFile{{ forloop.counter }}">
-                <label class="input-group-text" for="inputGroupFile{{ forloop.counter }}">Upload Assignment</label>
-            </div>
+            {% if task.assignment %}
+    <div class="alert alert-success mt-3" role="alert">
+        <h5 class="alert-heading"><i class="bi bi-file-earmark-check-fill"></i> File Uploaded</h5>
+        <p>Uploaded file: <strong>{{ task.assignment.name }}</strong></p>
+        <a href="{{ task.assignment.url }}" class="btn btn-outline-primary btn-sm" target="_blank">
+            <i class="bi bi-download"></i> Download File
+        </a>
+    </div>
+{% endif %}
+            <!-- File upload form for each task -->
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <input type="hidden" name="task_id" value="{{ task.id }}">
+                    <input type="file" class="form-control" name="assignment_file" id="inputGroupFile{{ forloop.counter }}">
+                    <label class="input-group-text" for="inputGroupFile{{ forloop.counter }}">Upload Assignment</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Assignment</button>
+            </form>
         </div>
         {% endfor %}
 
@@ -34,6 +50,7 @@
         <h4>There are no tasks for you at the moment.</h4>
     {% endif %}
 </div>
+
 
 
 {% endblock body %}

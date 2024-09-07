@@ -25,3 +25,8 @@ class StudentsTasks(models.Model):
 
     def __str__(self):
         return f"Task for {self.user.username}: {self.task_title}"
+
+class StudentsNotes(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    notes_title = models.CharField(max_length=255)
+    notes_pdf = models.FileField(upload_to='student_notes/', max_length=100)

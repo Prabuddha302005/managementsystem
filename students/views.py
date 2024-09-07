@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from students.models import StudentProfile, StudentsTasks
+from students.models import StudentProfile, StudentsTasks, StudentsNotes
 from django.contrib.auth.models import User
 from django.contrib import messages
 
@@ -61,8 +61,36 @@ def StudentTasks(request):
         # Retrieve all tasks for the logged-in user
         get_user_tasks = StudentsTasks.objects.filter(user=request.user)
         data['tasks'] = get_user_tasks
-        print(get_user_tasks)
+
     except StudentsTasks.DoesNotExist:
         # If no tasks exist, this block will handle the exception
         data['tasks'] = None
+
+    if request.method == 'POST':
+        task_id = request.POST.get('task_id')
+        assignment_file = request.FILES.get('assignment_file')
+
+        
+        # Find the specific task
+        task = StudentsTasks.objects.get(id=task_id, user=request.user)
+
+        # Save the uploaded assignment file
+        task.assignment = assignment_file
+        task.save()
+
+            # messages.success(request, 'Assignment uploaded successfully.')
+        # except StudentsTasks.DoesNotExist:
+        #     messages.error(request, 'Task not found.')
+
+         # Replace 'tasks_page' with the correct URL name
     return render(request, "students/tasks.html", context=data)
+
+def StudentNotes(request):
+    data = {}
+    # Retrieve all notes for the logged-in user
+ 
+    get_user_notes = StudentsNotes.objects.filter(user=request.user)
+    data['students_notes'] = get_user_notes
+    print(get_user_notes)
+        
+    return render(request, "students/notes.html", context=data)

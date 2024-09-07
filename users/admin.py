@@ -1,7 +1,8 @@
 from django.contrib import admin
-from students.models import StudentProfile, StudentsTasks
+from students.models import StudentProfile, StudentsTasks, StudentsNotes
 from interns.models import InternProfile
 from employee.models import EmployeeProfile
+from django.utils.html import format_html
 # Register your models here.
 class StudentProfileAdmin(admin.ModelAdmin):
     search_fields = ['user__username']
@@ -28,5 +29,18 @@ class StudentsTasksAdmin(admin.ModelAdmin):
     search_fields = ['user__username', 'task_title']  # Enable searching by username or task title
     list_filter = ['user']  # Filter tasks by user
 
+    def assignment_link(self, obj):
+        if obj.assignment:
+            return format_html('<a href="{}" target="_blank">View Assignment</a>', obj.assignment.url)
+        return "No Assignment Uploaded"
+    
+    assignment_link.short_description = "Assignment"
+
 admin.site.register(StudentsTasks, StudentsTasksAdmin)
 
+
+class StudentsNotesAdmin(admin.ModelAdmin):
+   list_display = ('user', 'notes_title', 'notes_pdf') 
+   fields = ('user', 'notes_title', 'notes_pdf')
+   search_fields = ['user__username', 'notes_title']
+admin.site.register(StudentsNotes, StudentsNotesAdmin)
