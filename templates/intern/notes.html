@@ -1,0 +1,56 @@
+{% extends "intern/navbar.html" %}
+{% block title %}Profile{% endblock title %}
+{% block body %}
+<style>
+    h4 {
+        font-family: 'Poppins', sans-serif;
+        color: #6F58E0; /* A calming, elegant color */
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+        font-size: 2em;
+        text-align: center;
+        margin-top: 20%;
+    }
+    .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: 0.3s;
+        border-radius: 10px;
+    }
+    .card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    .card-title {
+        color: #6F58E0;
+        font-family: 'Poppins', sans-serif;
+    }
+    .card-body {
+        text-align: center;
+    }
+    .btn-primary {
+        background-color: #6F58E0;
+        border: none;
+    }
+    </style>
+    
+    <div class="container mt-5">
+        {% if students_notes %}
+            <h3 class="text-center">Your Notes</h3>
+            <div class="row">
+                <!-- Loop through each note -->
+                {% for note in students_notes %}
+                <div class="col-md-4">
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ note.notes_title }}</h5>
+                            <p class="card-text">Click below to view or download your note.</p>
+                            <a href="{{ note.notes_pdf.url }}" target="_blank" class="btn btn-primary">View Note</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h4>You don't have notes at the moment</h4>
+        {% endif %}
+    </div>
+    
+{% endblock body %}

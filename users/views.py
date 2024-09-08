@@ -31,7 +31,9 @@ def user_login(request):
             # Check for InternProfile
             intern_profile = InternProfile.objects.get(user=user)
             if intern_profile.role == "Intern":
-                return redirect('/intern')
+                return redirect('/intern/profile')
+            else:
+                return redirect('/')
         except InternProfile.DoesNotExist:
             pass  # Handle the case if InternProfile does not exist
 
@@ -40,6 +42,8 @@ def user_login(request):
             student_profile = StudentProfile.objects.get(user=user)
             if student_profile.role == "Student":
                 return redirect('/student/profile')
+            else:
+                return redirect('/')
         except StudentProfile.DoesNotExist:
             pass  # Handle the case if StudentProfile does not exist
 
@@ -47,16 +51,6 @@ def user_login(request):
         return redirect('/default_page')  # Adjust as needed
 
     return render(request, 'users/login.html')
-
-
-
-
-# def home(request):
-#     if(request.user.is_authenticated):
-#         return render(request, "users/home.html")
-#     else:
-#         return redirect("/")
-#   return render(request, "users/home.html")
 
 def user_logout(request):
     logout(request)
