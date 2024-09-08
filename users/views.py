@@ -7,14 +7,22 @@ from students.models import StudentProfile
 
 
 def user_login(request):
+    data ={}
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
 
+        if(username == "" or password==""):
+            data['error_msg'] = "Fields can't be empty"
+            return render(request, 'users/login.html', context=data)
+        elif(password != password):
+            data['error_msg'] = "Wrong Password"
+            return render(request, 'users/login.html', context=data)
+        
         if user is None:
-            print("Wrong Password")
-            return render(request, "users/login.html")
+            data['error_msg'] = "Incorrect Username or Password "
+            return render(request, "users/login.html", context=data)
 
         # Log in the user
         login(request, user)
@@ -23,7 +31,7 @@ def user_login(request):
             # Check for EmployeeProfile
             employee_profile = EmployeeProfile.objects.get(user=user)
             if employee_profile.role == "Employee":
-                return redirect('/employee/home')
+                return redirect('/employee/profile')
         except EmployeeProfile.DoesNotExist:
             pass  # Handle the case if EmployeeProfile does not exist
 

@@ -1,0 +1,76 @@
+{% extends "employee/navbar.html" %}
+{% block title %}Profile{% endblock title %}
+{% block body %}
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f7f8fa;
+    }
+    .salary-card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-top: 20px;
+        transition: transform 0.3s ease;
+    }
+    .salary-card:hover {
+        transform: scale(1.05);
+    }
+    h2 {
+        color: #6F58E0;
+    }
+    .highlight {
+        color: #DE5499;
+        font-weight: 600;
+    }
+    .chart-container {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-top: 30px;
+    }
+    canvas {
+        max-width: 100%;
+    }
+    .total-salary {
+        background-color: #DE5499;
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+    .total-salary h3 {
+        font-size: 2.5rem;
+    }
+</style>
+</head>
+<body>
+
+<div class="container mt-5">
+<!-- Header Section -->
+<h2 class="text-center">Your Salary Details</h2>
+
+<!-- Monthly Salary Section -->
+<div class="salary-card">
+    <h4>Monthly Salary:</h4>
+    <p>Your current monthly salary is <span class="highlight">₹{{ salary.monthly_salary }}</span></p>
+</div>
+
+<!-- Yearly Salary Chart -->
+<!-- <div class="chart-container mt-5">
+    <h4>Yearly Salary Breakdown</h4>
+    <canvas id="salaryChart"></canvas>
+</div> -->
+
+<!-- Total Salary Section -->
+<div class="total-salary text-center mt-4">
+    <h3>Total Salary for the Year</h3>
+    <p class="display-5"><strong>₹{{ salary.total_salary }}</strong></p>
+</div>
+</div>
+
+
+{% endblock body %}

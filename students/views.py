@@ -19,33 +19,36 @@ def studentProfile(request):
         pass
         # messages.error(request, 'Profile not found.')
         # return redirect('profile_error_page')  # Replace with your error page
-    
-    if request.method == "POST":
-        phone = request.POST['phone']
-        parent_number = request.POST['parent_number']
-        email = request.POST['email']
-        education = request.POST['education']
-        image = request.FILES['image']
- 
-        print(image)
-        print(phone, parent_number, email, education)
-        # Update the existing User object with the new email
-        user = request.user
-        print(user)
-        user.email = email
-        user.save()
+    try:
+        if request.method == "POST":
+                phone = request.POST['phone']
+                parent_number = request.POST['parent_number']
+                email = request.POST['email']
+                education = request.POST['education']
+                image = request.FILES['image']
         
-        # Update the existing StudentProfile object with new details
-        get_user_details.phone = phone
-        get_user_details.parent_number = parent_number
-        get_user_details.education = education
-        get_user_details.image = image
     
-        get_user_details.save()
-        print(get_user_details.image.url)
-        messages.success(request, 'Your profile has been updated successfully.')
+        
+                print(image)
+                print(phone, parent_number, email, education)
+                # Update the existing User object with the new email
+                user = request.user
+                print(user)
+                user.email = email
+                user.save()
+                
+                # Update the existing StudentProfile object with new details
+                get_user_details.phone = phone
+                get_user_details.parent_number = parent_number
+                get_user_details.education = education
+                get_user_details.image = image
+            
+                get_user_details.save()
+                print(get_user_details.image.url)
+                messages.success(request, 'Your profile has been updated successfully.')
+    except:
+        messages.error(request, "All fields are necessary")
 
-        # profile image setup
     return render(request, "students/profile.html", context=data)
 
 def studentfeesDetails(request):
