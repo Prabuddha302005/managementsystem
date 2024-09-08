@@ -49,14 +49,14 @@ class InternNotesAdmin(admin.ModelAdmin):
 admin.site.register(InternNotes, InternNotesAdmin)
 
 class InternTasksAdmin(admin.ModelAdmin):
-   list_display = ('user', 'task_title', 'task_description') 
+   list_display = ('user', 'task_title', 'task_description', 'assignment') 
    fields = ('user', 'task_title', 'task_description')
    search_fields = ['user__username', 'task_title']  
 
 admin.site.register(InternTasks, InternTasksAdmin)
 
 class InternProjectAdmin(admin.ModelAdmin):
-    list_display = ('user', 'project_title', 'submission_date')  # Displays these fields in the list view
+    list_display = ('user', 'project_title', 'submission_date', 'project_link', 'project_file')  # Displays these fields in the list view
     search_fields = ('project_title', 'user__username')  # Enables search functionality by project title and username
     list_filter = ('submission_date',)  # Adds a filter by submission date
     fields = ('user', 'project_title', 'project_description')  # Fields to show in the form

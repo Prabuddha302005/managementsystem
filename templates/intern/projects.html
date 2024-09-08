@@ -13,24 +13,25 @@
                     <div class="card-body">
                         <h4 class="card-title">{{ project.project_title }}</h4>
                         <p class="card-text">{{ project.project_description }}</p>
-
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
                         <!-- Link upload -->
                         <div class="mb-3">
+                            <input type="hidden" name="project_id" value="{{ project.id }}">
                             <label for="projectLink{{ forloop.counter }}" class="form-label">Project Link (GitHub, etc.)</label>
-                            <input type="url" class="form-control" id="projectLink{{ forloop.counter }}" placeholder="Enter your project link" value="{{ project.project_link }}">
+                            <input type="url" class="form-control" name="project_link" id="projectLink{{ forloop.counter }}" placeholder="Enter your project link" value="{{ project.project_link }}">
                         </div>
-
                         <!-- File upload -->
                         <div class="mb-3">
                             <label for="inputGroupFile{{ forloop.counter }}" class="form-label">Or Upload Project (ZIP)</label>
-                            <input type="file" class="form-control" id="inputGroupFile{{ forloop.counter }}">
+                            <input type="file" class="form-control" name="assignment_file" id="inputGroupFile{{ forloop.counter }}">
                         </div>
 
                         <!-- Upload button -->
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-cloud-upload-fill"></i> Upload
                         </button>
-
+                    </form>
                         <!-- If project uploaded, show success message -->
                         {% if project.project_file %}
                         <div class="alert alert-success mt-3" role="alert">
