@@ -47,11 +47,13 @@ def user_login(request):
 
         try:
             # Check for StudentProfile
+          
             student_profile = StudentProfile.objects.get(user=user)
             if student_profile.role == "Student":
                 return redirect('/student/profile')
             else:
                 return redirect('/')
+         
         except StudentProfile.DoesNotExist:
             pass  # Handle the case if StudentProfile does not exist
 
@@ -63,5 +65,4 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect('/')
-
 

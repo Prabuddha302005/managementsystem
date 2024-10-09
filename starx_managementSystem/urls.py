@@ -23,6 +23,7 @@ urlpatterns = [
     path('student/', include("students.student_urls")),
     path('employee/', include("employee.employee_urls")),
     path('intern/', include("interns.interns_urls")),
+    path('custom-admin/', include("custom_admin.custom_admin_urls")),
 ]
 from django.conf.urls.static import static
 from django.conf import settings

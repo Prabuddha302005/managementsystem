@@ -1,0 +1,115 @@
+{% extends "custom_admin/navbar.html" %}
+{% block title %}Starx-Admin-Panel{% endblock title %}
+{% block body %}
+<style>
+    body {
+      background-color: #f0f2f5;
+    }
+
+    .container {
+      margin-top: 50px;
+    }
+
+    .search-bar input {
+      border-radius: 25px;
+    }
+
+    .profile-table th {
+      cursor: pointer;
+    }
+
+    .profile-actions button {
+      margin-right: 5px;
+    }
+
+    .profile-actions .btn {
+      border-radius: 8px;
+      transition: 0.3s ease;
+    }
+
+    .profile-actions .btn:hover {
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .filter-section select {
+      border-radius: 10px;
+    }
+
+    .card-header {
+      background-color: #6f58e0;
+      color: white;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .card {
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <h4 class="mb-0">Manage Profiles</h4>
+    </div>
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="search-bar">
+            <input type="text" class="form-control" placeholder="Search profiles...">
+          </div>
+        </div>
+        <div class="col-md-6 text-end filter-section">
+          <select class="form-select d-inline-block w-auto me-2">
+            <option value="">Sort by</option>
+            <option value="name">Name</option>
+            <option value="date">Date Added</option>
+            <option value="status">Status</option>
+          </select>
+          <select class="form-select d-inline-block w-auto">
+            <option value="">Filter by Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Profile Table -->
+      <table class="table table-bordered profile-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Phone Number</th>
+            <th>Parent number</th>
+            <th>Course Enrolled</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for profile in all_profiles %}
+          <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{profile.user}}</td>
+            <td>{{profile.phone}}</td>
+            <td>{{profile.parent_number}}</td>
+            
+            <td><span class="badge bg-success">{{profile.course_name}}</span></td>
+            <td class="profile-actions">
+              <button class="btn btn-info btn-sm">View</button>
+              <button class="btn btn-warning btn-sm">Edit</button>
+              <button class="btn btn-danger btn-sm">Delete</button>
+            </td>
+          </tr>
+          <!-- More profiles can be added here -->
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock body %}

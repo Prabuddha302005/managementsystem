@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'students',
     'interns',
     'employee',
+    'custom_admin'
 
 ]
 
