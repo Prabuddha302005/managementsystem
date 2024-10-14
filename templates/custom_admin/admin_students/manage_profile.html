@@ -53,29 +53,46 @@
 <div class="container">
   <div class="card">
     <div class="card-header">
-      <h4 class="mb-0">Manage Profiles</h4>
+      <h4 class="mb-0">Manage Profiles - Students</h4>
     </div>
     <div class="card-body">
       <div class="row mb-3">
         <div class="col-md-6">
-          <div class="search-bar">
-            <input type="text" class="form-control" placeholder="Search profiles...">
-          </div>
-        </div>
+          <form method="POST">
+            {% csrf_token %}
+            <div class="search-bar d-flex">
+              <input type="text" name="search" class="form-control w-50" placeholder="Search profiles..."/>
+              <button class="btn btn-primary ms-2" type="submit">Search</button>
+            </form>
+            </div>
+            </div>
         <div class="col-md-6 text-end filter-section">
-          <select class="form-select d-inline-block w-auto me-2">
+          <!-- <select class="form-select d-inline-block w-auto me-2">
             <option value="">Sort by</option>
             <option value="name">Name</option>
             <option value="date">Date Added</option>
             <option value="status">Status</option>
-          </select>
-          <select class="form-select d-inline-block w-auto">
-            <option value="">Filter by Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
+          </select> -->
+          <form method="GET">
+            <select class="form-select d-inline-block w-auto" name="course" onchange="this.form.submit()">
+                <option value="all" selected>Filter by Course</option>
+                <option value="c">C</option>
+                <option value="c++">C++</option>
+                <option value="core-java">Core Java</option>
+                <option value="adv-java">Advanced Java</option>
+                <option value="python">Python</option>
+                <option value="c#">C#</option>
+                <option value="asp">ASP.NET</option>
+                <option value="mysql">MySQL</option>
+                <option value="web-development">Web Development</option>
+                <option value="php">PHP</option>
+                <option value="android">Android Development</option>
+            </select>
+        </form>
+        
         </div>
       </div>
+      
 
       <!-- Profile Table -->
       <table class="table table-bordered profile-table">
@@ -99,8 +116,8 @@
             
             <td><span class="badge bg-success">{{profile.course_name}}</span></td>
             <td class="profile-actions">
-              <button class="btn btn-info btn-sm">View</button>
-              <button class="btn btn-warning btn-sm">Edit</button>
+              <a href="/custom-admin/students/view/{{profile.user_id}}"><button class="btn btn-info btn-sm">View</button></a>
+              <a href="/custom-admin/students/edit/{{profile.user_id}}"><button class="btn btn-warning btn-sm">Edit</button></a>
               <button class="btn btn-danger btn-sm">Delete</button>
             </td>
           </tr>

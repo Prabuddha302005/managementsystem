@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from students.models import StudentsNotes, StudentsTasks, StudentProfile
 from django.contrib import messages
+from django.db.models import Q
 # Create your views here.
 
 def admin_login(request):
@@ -41,8 +42,23 @@ def dashboard(request):
 
 def manage_student_profile(request):
     data={}
+    course = request.GET.get('course')
     get_student_profiles = StudentProfile.objects.all()
+    # data['all_profiles'] = get_student_profiles
+    if course:
+        get_student_profiles = StudentProfile.objects.filter(course_name__icontains=course)
+    
+    else:
+        get_student_profiles = StudentProfile.objects.all()
+    if request.method == "POST":
+        query = request.POST.get('search')
+
+        if query:
+           get_student_profiles = StudentProfile.objects.filter(Q(user__username__icontains=query) | Q (user__first_name__icontains=query) | Q(user__last_name__icontains=query))
+      
     data['all_profiles'] = get_student_profiles
+
+
     return render(request, "custom_admin/admin_students/manage_profile.html", context=data)
 
 
@@ -72,3 +88,15 @@ def studentAssignTask(request):
             
         assign_task = StudentsTasks.objects.create(user_id=student_id , task_title=task_title, task_description=task_description)
     return render(request, "custom_admin/admin_students/assign_task.html", context=data)
+
+def view_profile_student(request, user_id):
+    data={}
+    get_user = StudentProfile.objects.get(user_id = user_id)
+    data['student'] = get_user
+    return render(request, "custom_admin/admin_students/view_profile.html", context=data)
+
+def edit_profile_student(request, user_id):
+    data={}
+    get_user = StudentProfile.objects.get(user_id = user_id)
+    data['student'] = get_user
+    return render(request, "custom_admin/admin_students/edit_profile.html", context=data)
