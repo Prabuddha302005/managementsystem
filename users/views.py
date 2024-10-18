@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from employee.models import EmployeeProfile
@@ -58,7 +58,7 @@ def user_login(request):
             pass  # Handle the case if StudentProfile does not exist
 
         # Redirect to a default page or show an error if no profile matches
-        return redirect('/default_page')  # Adjust as needed
+        return HttpResponse('Profile not created by the admin') # Adjust as needed
 
     return render(request, 'users/login.html')
 
