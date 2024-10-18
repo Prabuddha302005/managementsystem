@@ -12,4 +12,6 @@ urlpatterns = [
    path('students/add-notes/', views.studentAddNotes),
    path('students/assign-task/', views.studentAssignTask),
    path('students/check-task/', views.studentAssignTaskCheck),
+   path('students/update-fees/<user_id>', views.update_student_fees),
+   path('students/fees-history/<user_id>', views.student_fees_history),
 ]

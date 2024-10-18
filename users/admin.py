@@ -9,8 +9,8 @@ from django.utils.html import format_html
 # Student related models 
 class StudentProfileAdmin(admin.ModelAdmin):
     search_fields = ['user__username']
-    list_display = ('user', 'phone', 'course_name', 'fees_paid', 'fees_pending', 'total_fees')
-    fields = ('user', 'course_name', 'remark', 'total_fees', 'fees_paid', 'fees_pending')
+    list_display = ('user', 'phone', 'course_name')
+    fields = ('user', 'course_name', 'remark')
 
 admin.site.register(StudentProfile, StudentProfileAdmin)
 

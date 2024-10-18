@@ -1,0 +1,94 @@
+{% extends "custom_admin/navbar.html" %}
+{% block title %}Add Payment for {{ user.username }}{% endblock title %}
+{% block body %}
+<style>
+    body {
+        background-color: #f7f9fc;
+        font-family: 'Arial', sans-serif;
+    }
+    .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    .form-control {
+        border-radius: 10px;
+        border: 1px solid #ced4da;
+        padding: 10px 15px;
+    }
+    .form-control:focus {
+        border-color: #6f58e0;
+        box-shadow: 0 0 5px rgba(111, 88, 224, 0.5);
+    }
+    .btn-custom {
+        background-color: #6f58e0;
+        border-color: #6f58e0;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    .btn-custom:hover {
+        background-color: #563ec9;
+        border-color: #563ec9;
+        box-shadow: 0 4px 12px rgba(111, 88, 224, 0.2);
+    }
+</style>
+
+<div class="form-container">
+    <h2 class="text-center">Add Payment for {{ user.username }}</h2>
+
+    {% if messages %}
+    <div class="container mt-5">
+        {% for message in messages %}
+        {% if message.tags == "success" %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% else %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="total_fees" class="form-label">Total Fees</label>
+            <input type="number" class="form-control" id="total_fees" name="total_fees" placeholder="Enter total fees" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="paid_fees" class="form-label">Paying Fees</label>
+            <input type="number" class="form-control" id="paid_fees" name="paid_fees" placeholder="Enter paid fees" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="paid_fees" class="form-label">Pending Fees</label>
+            <input type="number" class="form-control" id="paid_fees" name="paid_fees" placeholder="Enter paid fees" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="fees_remark" class="form-label">Fees Remark</label>
+            <input type="text" class="form-control" id="fees_remark" name="fees_remark" placeholder="Enter remark" required>
+        </div>
+
+        <button type="submit" class="btn btn-custom btn-block mt-3">Add Payment</button>
+    </form>
+</div>
+
+{% endblock body %}

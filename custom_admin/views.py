@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from students.models import StudentsNotes, StudentsTasks, StudentProfile
+from students.models import StudentsNotes, StudentsTasks, StudentProfile, Fees
 from django.contrib import messages
 from django.db.models import Q
+
 # Create your views here.
 
 def admin_login(request):
@@ -72,13 +73,22 @@ def add_student_profile(request):
         course_name = request.POST['course_name']
         remark = request.POST['remark']
         total_fees = request.POST['total_fees']
-        print(username, course_name, remark, total_fees)
+        paid_fees = request.POST['paid_fees']
+        pending_fees = request.POST['pending_fees']
+        fees_remark = request.POST['fees_remark']
         if(StudentProfile.objects.filter(user_id=username).exists()):
             messages.error(request, "Student Profile already exists")
         else:
 
-            save_profile = StudentProfile.objects.create(user_id=username, course_name=course_name, remark=remark, total_fees=total_fees)
+            save_profile = StudentProfile.objects.create(user_id=username, course_name=course_name, remark=remark)
 
+            Fees.objects.create(
+                student_profile=save_profile,  # Link to the student profile instance
+                total_fees=total_fees,
+                paid_fees=paid_fees,
+                pending_fees=pending_fees,  # Automatically calculated
+                fees_remark=fees_remark
+            )
             messages.success(request, "Profile created sucessfully.")
     return render(request, "custom_admin/admin_students/add_profile_student.html", context=data)
 
@@ -203,7 +213,23 @@ def edit_profile_student(request, user_id):
             messages.success(request, "Data saved ")
     except:
          messages.error(request, "error occurred ")
-
-
-        
     return render(request, "custom_admin/admin_students/edit_profile.html", context=data)
+
+def update_student_fees(request, user_id):
+    data={}
+
+    return render(request, "custom_admin/admin_students/update_fees.html", context=data)
+
+def student_fees_history(request, user_id):
+    # Get the user object
+    user = get_object_or_404(User, id=user_id)
+
+    # Fetch fees associated with this user
+    fees_records = Fees.objects.filter(student_profile__user=user)
+
+    # Pass the records to the context
+    context = {
+        'user': user,
+        'fees_records': fees_records
+    }
+    return render(request, "custom_admin/admin_students/fees_history.html", context)

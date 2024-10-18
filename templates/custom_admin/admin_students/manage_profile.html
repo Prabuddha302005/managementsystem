@@ -117,11 +117,12 @@
             <td><span class="badge bg-success">{{profile.course_name}}</span></td>
             <td class="profile-actions">
               <a href="/custom-admin/students/view/{{profile.user_id}}"><button class="btn btn-info btn-sm">View</button></a>
-              <a href="/custom-admin/students/edit/{{profile.user_id}}"><button class="btn btn-warning btn-sm">Edit</button></a>
-              <button class="btn btn-danger btn-sm">Delete</button>
+              <a href="/custom-admin/students/edit/{{profile.user_id}}"><button class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</button></a>
+              <a href="/custom-admin/students/update-fees/{{profile.user_id}}"><button class="btn btn-success btn-sm"><i class="bi bi-currency-rupee"></i> Update fees</button></a>
+              <a href="/custom-admin/students/fees-history/{{profile.user_id}}"><button class="btn btn-secondary   btn-sm"><i class="bi bi-clock-history"></i> fees history</button></a>
             </td>
           </tr>
-          <!-- More profiles can be added here -->
+
           {% endfor %}
         </tbody>
       </table>
