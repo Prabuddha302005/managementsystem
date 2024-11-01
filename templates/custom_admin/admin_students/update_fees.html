@@ -69,17 +69,17 @@
         
         <div class="mb-3">
             <label for="total_fees" class="form-label">Total Fees</label>
-            <input type="number" class="form-control" id="total_fees" name="total_fees" placeholder="Enter total fees" required>
+            <input type="number" class="form-control" id="total_fees" name="total_fees" placeholder="Enter total fees" value="{{ last_total_fees }}" readonly required>
         </div>
 
         <div class="mb-3">
             <label for="paid_fees" class="form-label">Paying Fees</label>
-            <input type="number" class="form-control" id="paid_fees" name="paid_fees" placeholder="Enter paid fees" required>
+            <input type="number" class="form-control" id="paid_fees" name="paid_fees" placeholder="Enter paid fees" oninput="updatePendingFees()" required>
         </div>
 
         <div class="mb-3">
-            <label for="paid_fees" class="form-label">Pending Fees</label>
-            <input type="number" class="form-control" id="paid_fees" name="paid_fees" placeholder="Enter paid fees" required>
+            <label for="pending_fees" class="form-label">Pending Fees</label>
+            <input type="number" class="form-control" id="pending_fees" name="pending_fees" value="{{ last_pending_fees }}" readonly>
         </div>
 
         <div class="mb-3">
@@ -90,5 +90,6 @@
         <button type="submit" class="btn btn-custom btn-block mt-3">Add Payment</button>
     </form>
 </div>
+
 
 {% endblock body %}

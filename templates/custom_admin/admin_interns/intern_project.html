@@ -1,0 +1,67 @@
+{% extends "custom_admin/navbar.html" %}
+{% block title %}Starx-Admin-Panel{% endblock title %}
+{% block body %}
+<style>
+    body {
+        background-color: #f4f7fc;
+    }
+    .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #5a67d8;
+    }
+    .btn-custom {
+        background-color: #5a67d8;
+        color: #fff;
+    }
+    .btn-custom:hover {
+        background-color: #434190;
+    }
+    .form-label {
+        color: #4a5568;
+    }
+</style>
+<div class="container">
+    <div class="form-container">
+        <h2>Assign Projects to Interns</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3" >
+                <label for="internname" class="form-label">Intern Name</label>
+                <select class="form-select" id="internname" name="internname" required>
+                    <option selected disabled>Select Intern</option>
+                    {% for interns in interns %}
+                    <option value="{{interns.user_id}}">{{interns.user.username}}, {{interns.internship_name}} </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Notes Title Input -->
+            <div class="mb-3">
+                <label for="notesTitle" class="form-label">Project Title</label>
+                <input type="text" class="form-control" id="notesTitle" placeholder="Enter Task Title" name="project_title" required>
+            </div>
+
+            <!-- Notes PDF Upload -->
+            <div class="form-floating">
+                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" name="project_description"></textarea>
+                <label for="floatingTextarea2">Project Description</label>
+              </div>
+
+            <!-- Submit Button -->
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-custom">Assign Project</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock body %}

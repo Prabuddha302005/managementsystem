@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from students.models import StudentsNotes, StudentsTasks, StudentProfile, Fees
+from interns.models import InternProfile, InternNotes, InternProject
 from django.contrib import messages
 from django.db.models import Q
 
@@ -216,8 +217,42 @@ def edit_profile_student(request, user_id):
     return render(request, "custom_admin/admin_students/edit_profile.html", context=data)
 
 def update_student_fees(request, user_id):
-    data={}
+    user = get_object_or_404(User, id=user_id)
+    last_fee_record = Fees.objects.filter(student_profile__user=user).order_by('-id').first()
+    
+    if request.method == "POST":
+        # Retrieve last total fees and new payment amount
+        total_fees = last_fee_record.total_fees if last_fee_record else 0
+        paid_fees = int(request.POST.get("paid_fees", 0))
+        fees_remark = request.POST.get("fees_remark", "")
 
+        # Calculate new cumulative paid amount
+        total_paid_so_far = last_fee_record.paid_fees if last_fee_record else 0
+        new_total_paid = total_paid_so_far + paid_fees
+
+        # Calculate pending fees based on total fees
+        new_pending_fees = total_fees - new_total_paid
+
+        # Get the student profile and save the updated fees data
+        student_profile = get_object_or_404(StudentProfile, user=user)
+        Fees.objects.create(
+            student_profile=student_profile,
+            total_fees=total_fees,
+            paid_fees=new_total_paid,
+            pending_fees=new_pending_fees,
+            fees_remark=fees_remark
+        )
+
+        # Display a success message
+        messages.success(request, "Payment successfully added and fees updated.")
+        return redirect('fees_list')  # Redirect to the fees list or appropriate page
+
+    # Pass data to the template for display
+    data = {
+        'user': user,
+        'last_total_fees': last_fee_record.total_fees if last_fee_record else '',
+        'last_pending_fees': last_fee_record.pending_fees if last_fee_record else '',
+    }
     return render(request, "custom_admin/admin_students/update_fees.html", context=data)
 
 def student_fees_history(request, user_id):
@@ -233,3 +268,48 @@ def student_fees_history(request, user_id):
         'fees_records': fees_records
     }
     return render(request, "custom_admin/admin_students/fees_history.html", context)
+
+
+# interns
+def manage_interns_profile(request):
+    data={}
+    course = request.GET.get('course')
+    get_intern_profiles = InternProfile.objects.all()
+    if course:
+        get_intern_profiles = InternProfile.objects.filter(course_name__icontains=course)
+    
+    else:
+        get_intern_profiles = InternProfile.objects.all()
+    if request.method == "POST":
+        query = request.POST.get('search')
+
+        if query:
+           get_intern_profiles = InternProfile.objects.filter(Q(user__username__icontains=query) | Q (user__first_name__icontains=query) | Q(user__last_name__icontains=query))
+      
+    data['all_profiles'] = get_intern_profiles
+    return render(request, "custom_admin/admin_interns/manage_profile.html", context=data)
+
+def internAddNotes(request):
+    data = {}
+    getIntern = InternProfile.objects.all()
+    data['interns'] = getIntern
+    if(request.method == "POST"):
+        intern_id  = request.POST['intername']
+        notestitle = request.POST['notestitle']
+        notesfile = request.FILES.get('notesfile')
+        print("=======>", intern_id , notestitle, notesfile)
+            
+        assign_notes = InternNotes.objects.create(user_id=intern_id , notes_title=notestitle, notes_pdf=notesfile)
+    return render(request, "custom_admin/admin_interns/add_notes.html", context=data)
+
+def internAssignTasks(request):
+    data = {}
+    getInterns = InternProfile.objects.all()
+    data['interns'] = getInterns
+    if(request.method == "POST"):
+        intern_id  = request.POST['internname']
+        project_title = request.POST['project_title']
+        project_description = request.POST['project_description']
+        print("***************************************************", intern_id)
+        assign_task = InternProject.objects.create(user_id=intern_id , project_title=project_title, project_description=project_description)
+    return render(request, "custom_admin/admin_interns/intern_project.html", context=data)

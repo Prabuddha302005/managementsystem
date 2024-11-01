@@ -1,0 +1,127 @@
+{% extends "custom_admin/navbar.html" %}
+{% block title %}Starx-Admin-Panel{% endblock title %}
+{% block body %}
+<style>
+    body {
+      background-color: #f0f2f5;
+    }
+
+    .container {
+      margin-top: 50px;
+    }
+
+    .search-bar input {
+      border-radius: 25px;
+    }
+
+    .profile-table th {
+      cursor: pointer;
+    }
+
+    .profile-actions button {
+      margin-right: 5px;
+    }
+
+    .profile-actions .btn {
+      border-radius: 8px;
+      transition: 0.3s ease;
+    }
+
+    .profile-actions .btn:hover {
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .filter-section select {
+      border-radius: 10px;
+    }
+
+    .card-header {
+      background-color: #6f58e0;
+      color: white;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .card {
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <h4 class="mb-0">Manage Profiles - Interns</h4>
+    </div>
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <form method="POST">
+            {% csrf_token %}
+            <div class="search-bar d-flex">
+              <input type="text" name="search" class="form-control w-50" placeholder="Search profiles..."/>
+              <button class="btn btn-primary ms-2" type="submit">Search</button>
+            </form>
+            </div>
+            </div>
+        <div class="col-md-6 text-end filter-section">
+          <form method="GET">
+            <select class="form-select d-inline-block w-auto" name="course" onchange="this.form.submit()">
+                <option value="all" selected>Filter by Course</option>
+                <option value="c">C</option>
+                <option value="c++">C++</option>
+                <option value="core-java">Core Java</option>
+                <option value="adv-java">Advanced Java</option>
+                <option value="python">Python</option>
+                <option value="c#">C#</option>
+                <option value="asp">ASP.NET</option>
+                <option value="mysql">MySQL</option>
+                <option value="web-development">Web Development</option>
+                <option value="php">PHP</option>
+                <option value="android">Android Development</option>
+            </select>
+        </form>
+        
+        </div>
+      </div>
+      
+
+      <!-- Profile Table -->
+      <table class="table table-bordered profile-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Phone Number</th>
+            <th>Parent number</th>
+            <th>Internship Enrolled</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for profile in all_profiles %}
+          <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{profile.user}}</td>
+            <td>{{profile.phone}}</td>
+            <td>{{profile.parent_number}}</td>
+            
+            <td><span class="badge bg-success">{{profile.internship_name}}</span></td>
+            <td class="profile-actions">
+              <a href="/custom-admin/students/view/{{profile.user_id}}"><button class="btn btn-info btn-sm">View</button></a>
+              <a href="/custom-admin/students/edit/{{profile.user_id}}"><button class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</button></a>
+              <a href="/custom-admin/students/update-fees/{{profile.user_id}}"><button class="btn btn-success btn-sm"><i class="bi bi-currency-rupee"></i> Update fees</button></a>
+              <a href="/custom-admin/students/fees-history/{{profile.user_id}}"><button class="btn btn-secondary   btn-sm"><i class="bi bi-clock-history"></i> fees history</button></a>
+            </td>
+          </tr>
+
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock body %}
