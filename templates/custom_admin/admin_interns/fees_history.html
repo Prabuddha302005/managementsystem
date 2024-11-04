@@ -1,0 +1,65 @@
+{% extends "custom_admin/navbar.html" %}
+{% block title %}Fees List - Admin Panel{% endblock title %}
+{% block body %}
+<style>
+    body {
+        background-color: #f7f9fc;
+        font-family: 'Arial', sans-serif;
+    }
+    .table-container {
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table th, .table td {
+        border: 1px solid #dee2e6;
+        padding: 12px;
+        text-align: left;
+    }
+    .table th {
+        background-color: #6f58e0;
+        color: #fff;
+    }
+</style>
+
+<div class="table-container">
+    <h2 class="text-center">Fees Records</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+        
+                <th>Intern Profile</th>
+                <th>Total Fees</th>
+                <th>Paid Fees</th>
+                <th>Pending Fees</th>
+                <th>Fees Remark</th>
+                <th>Payment date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fee in fees_records %}
+            <tr>
+                <td>{{ fee.intern_profile.user.username }}</td>  <!-- Assuming there is a User linked -->
+                <td>{{ fee.total_fees }}</td>
+                <td>{{ fee.paid_fees }}</td>
+                <td>{{ fee.pending_fees }}</td>
+                <td>{{ fee.fees_remark }}</td>
+                <td>{{ fee.date_time }}</td>
+                {% if fee == "" %}
+                <h1>No fees record found</h1>
+                {% endif %}
+            </tr>
+            {% endfor %}
+         
+        </tbody>
+    </table>
+</div>
+{% endblock body %}

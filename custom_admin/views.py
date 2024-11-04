@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from students.models import StudentsNotes, StudentsTasks, StudentProfile, Fees
-from interns.models import InternProfile, InternNotes, InternProject
+from interns.models import InternProfile, InternNotes, InternProject, FeesIntern, InternTasks
+from employee.models import EmployeeProfile
 from django.contrib import messages
 from django.db.models import Q
 
@@ -93,27 +94,6 @@ def add_student_profile(request):
             messages.success(request, "Profile created sucessfully.")
     return render(request, "custom_admin/admin_students/add_profile_student.html", context=data)
 
-# def add_intern_profile(request):
-# ---- for interns profile. 
-#     data = {}
-#     get_users = User.objects.all()
-#     data['users'] = get_users
-
-#     if request.method == "POST":
-#         username = request.POST['username']
-#         internship_name = request.POST['internship_name']
-#         remark = request.POST['remark']
-#         total_fees = request.POST['total_fees']
-#         print(username, internship_name, remark, total_fees)
-#         if(StudentProfile.objects.filter(user_id=username).exists()):
-#             messages.error(request, "Student Profile already exists")
-#         else:
-
-#             save_profile = StudentProfile.objects.create(user_id=username, course_name=course_name, remark=remark, total_fees=total_fees)
-
-#             messages.success(request, "Profile created sucessfully.")
-#     return render(request, "custom_admin/admin_students/add_profile_student.html", context=data)
-    
 def manage_student_profile(request):
     data={}
     course = request.GET.get('course')
@@ -271,12 +251,41 @@ def student_fees_history(request, user_id):
 
 
 # interns
+def add_intern_profile(request):
+    data = {}
+    get_users = User.objects.all()
+    data['users'] = get_users
+
+    if request.method == "POST":
+        username = request.POST['username']
+        internship_name = request.POST['internship_name']
+        remark = request.POST['remark']
+        total_fees = request.POST['total_fees']
+        paid_fees = request.POST['paid_fees']
+        pending_fees = request.POST['pending_fees']
+        fees_remark = request.POST['fees_remark']
+        if(InternProfile.objects.filter(user_id=username).exists()):
+            messages.error(request, "Intern Profile already exists")
+        else:
+
+            save_profile = InternProfile.objects.create(user_id=username, internship_name=internship_name, remark=remark)
+
+            FeesIntern.objects.create(
+                intern_profile=save_profile,  # Link to the intern profile instance
+                total_fees=total_fees,
+                paid_fees=paid_fees,
+                pending_fees=pending_fees,  # Automatically calculated
+                fees_remark=fees_remark
+            )
+            messages.success(request, "Profile created sucessfully.")
+    return render(request, "custom_admin/admin_interns/add_profile_intern.html", context=data)
+
 def manage_interns_profile(request):
     data={}
     course = request.GET.get('course')
     get_intern_profiles = InternProfile.objects.all()
     if course:
-        get_intern_profiles = InternProfile.objects.filter(course_name__icontains=course)
+        get_intern_profiles = InternProfile.objects.filter(internship_name__icontains=course)
     
     else:
         get_intern_profiles = InternProfile.objects.all()
@@ -288,6 +297,94 @@ def manage_interns_profile(request):
       
     data['all_profiles'] = get_intern_profiles
     return render(request, "custom_admin/admin_interns/manage_profile.html", context=data)
+
+def view_profile_intern(request, user_id):
+    data={}
+    get_user = InternProfile.objects.get(user_id = user_id)
+    data['intern'] = get_user
+    
+    return render(request, "custom_admin/admin_interns/view_profile.html", context=data)
+
+def edit_profile_intern(request, user_id):
+    data={}
+    try:
+        get_user_profile = InternProfile.objects.get(user_id = user_id)
+        get_user = User.objects.get(id=user_id)
+        data['intern'] = get_user_profile
+
+
+        if(request.method=="POST"):
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            phone = request.POST['phone']
+            parent_number = request.POST['parent_number']
+            internship_name = request.POST['internship_name']
+
+            get_user.first_name = first_name
+            get_user.last_name = last_name
+            get_user_profile.phone = phone
+            get_user_profile.parent_number = parent_number
+            get_user_profile.internship_name = internship_name
+            get_user.save()
+            get_user.save()
+            messages.success(request, "Data saved")
+    except:
+         messages.error(request, "error occurred ")
+       
+    return render(request, "custom_admin/admin_interns/edit_profile_intern.html", context=data)
+
+def update_intern_fees(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    last_fee_record = FeesIntern.objects.filter(intern_profile__user=user).order_by('-id').first()
+    
+    if request.method == "POST":
+        # Retrieve last total fees and new payment amount
+        total_fees = last_fee_record.total_fees if last_fee_record else 0
+        paid_fees = int(request.POST.get("paid_fees", 0))
+        fees_remark = request.POST.get("fees_remark", "")
+
+        # Calculate new cumulative paid amount
+        total_paid_so_far = last_fee_record.paid_fees if last_fee_record else 0
+        new_total_paid = total_paid_so_far + paid_fees
+
+        # Calculate pending fees based on total fees
+        new_pending_fees = total_fees - new_total_paid
+
+        # Get the student profile and save the updated fees data
+        intern_profile = get_object_or_404(InternProfile, user=user)
+        FeesIntern.objects.create(
+            intern_profile=intern_profile,
+            total_fees=total_fees,
+            paid_fees=new_total_paid,
+            pending_fees=new_pending_fees,
+            fees_remark=fees_remark
+        )
+
+        # Display a success message
+        messages.success(request, "Payment successfully added and fees updated.")
+        return redirect('fees_list')  # Redirect to the fees list or appropriate page
+
+    # Pass data to the template for display
+    data = {
+        'user': user,
+        'last_total_fees': last_fee_record.total_fees if last_fee_record else '',
+        'last_pending_fees': last_fee_record.pending_fees if last_fee_record else '',
+    }
+    return render(request, "custom_admin/admin_interns/update_fees.html", context=data)
+
+def intern_fees_history(request, user_id):
+    # Get the user object
+    user = get_object_or_404(User, id=user_id)
+
+    # Fetch fees associated with this user
+    fees_records = FeesIntern.objects.filter(intern_profile__user=user)
+
+    # Pass the records to the context
+    context = {
+        'user': user,
+        'fees_records': fees_records
+    }
+    return render(request, "custom_admin/admin_interns/fees_history.html", context)
 
 def internAddNotes(request):
     data = {}
@@ -302,7 +399,7 @@ def internAddNotes(request):
         assign_notes = InternNotes.objects.create(user_id=intern_id , notes_title=notestitle, notes_pdf=notesfile)
     return render(request, "custom_admin/admin_interns/add_notes.html", context=data)
 
-def internAssignTasks(request):
+def internAssignProject(request):
     data = {}
     getInterns = InternProfile.objects.all()
     data['interns'] = getInterns
@@ -313,3 +410,90 @@ def internAssignTasks(request):
         print("***************************************************", intern_id)
         assign_task = InternProject.objects.create(user_id=intern_id , project_title=project_title, project_description=project_description)
     return render(request, "custom_admin/admin_interns/intern_project.html", context=data)
+
+
+def internAssignTasks(request):
+    # pass the InternProfile names to the template
+    # get the data from the template  
+    # save the data to the database. 
+    
+    data={}
+    get_intern_profiles = InternProfile.objects.all()
+    data['intern'] = get_intern_profiles
+    try:
+        if(request.method == "POST"):
+            intern_id  = request.POST['internname']
+            task_title = request.POST['task_title']
+            task_description = request.POST['description']
+                
+            assign_task = InternTasks.objects.create(user_id=intern_id , task_title=task_title, task_description=task_description)
+            assigned_intern = InternProfile.objects.get(user_id=intern_id)
+            messages.success(request, f"Task assigned to {assigned_intern.user.username}")
+    except:
+        messages.error(request, "Error Occurred")
+    return render(request, "custom_admin/admin_interns/assign_tasks.html", context=data)
+
+def internCheckTask(request):
+    data = {}
+    
+    # Get search query from the request
+    search_query = request.GET.get('search', '')
+    
+    # Filter tasks by search query (student username or task title)
+    if search_query:
+        tasks = InternTasks.objects.filter(
+            Q(user__username__icontains=search_query) | 
+            Q(task_title__icontains=search_query)
+        )
+    else:
+        tasks = InternTasks.objects.all()  # If no search, return all tasks
+    
+    # Add the tasks to the context
+    data['tasks'] = tasks    
+    return render(request, "custom_admin/admin_interns/check_tasks.html", context=data)
+
+def internCheckProjects(request):
+    data = {}
+    
+    # Get search query from the request
+    search_query = request.GET.get('search', '')
+    
+    # Filter tasks by search query (student username or task title)
+    if search_query:
+        projects = InternProject.objects.filter(
+            Q(user__username__icontains=search_query) | 
+            Q(task_title__icontains=search_query)
+        )
+    else:
+        projects = InternProject.objects.all()  # If no search, return all tasks
+    
+    # Add the tasks to the context
+    data['projects'] = projects    
+    return render(request, "custom_admin/admin_interns/check_projects.html", context=data)
+
+# employee
+def add_employee_profile(request):
+    data = {}
+    get_users = User.objects.all()
+    data['users'] = get_users
+
+    if request.method == "POST":
+        username = request.POST['username']
+        designation = request.POST['designation']
+        monthly_salary = request.POST['monthly_salary']
+        annual_salary = request.POST['annual_salary']
+        if(EmployeeProfile.objects.filter(user_id=username).exists()):
+            messages.error(request, "Employee Profile already exists")
+        else:
+
+            save_profile = EmployeeProfile.objects.create(user_id=username, designation=designation, monthly_salary=monthly_salary, total_salary=annual_salary)
+
+            # FeesIntern.objects.create(
+            #     intern_profile=save_profile,  # Link to the intern profile instance
+            #     total_fees=total_fees,
+            #     paid_fees=paid_fees,
+            #     pending_fees=pending_fees,  # Automatically calculated
+            #     fees_remark=fees_remark
+            # )
+            messages.success(request, "Profile created sucessfully.")
+    return render(request, "custom_admin/admin_employees/add_profile_employee.html", context=data)

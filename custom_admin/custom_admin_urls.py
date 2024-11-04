@@ -15,8 +15,22 @@ urlpatterns = [
    path('students/update-fees/<user_id>', views.update_student_fees),
    path('students/fees-history/<user_id>', views.student_fees_history),
 
-   # interns
+   # interns 
+   path('add-profile-intern/', views.add_intern_profile),
    path('interns/manage-profiles/', views.manage_interns_profile),
+   path('interns/view/<user_id>', views.view_profile_intern),
+   path('interns/edit/<user_id>', views.edit_profile_intern),
+   path('interns/update-fees/<user_id>', views.update_intern_fees),
+   path('interns/fees-history/<user_id>', views.intern_fees_history),
    path('interns/add-notes/', views.internAddNotes),
-   path('interns/assign-project/', views.internAssignTasks),
+   path('interns/assign-project/', views.internAssignProject),
+   path('interns/assign-task/', views.internAssignTasks),
+   path('interns/check-tasks/', views.internCheckTask),
+   path('interns/check-projects/', views.internCheckProjects),
+
+   #employee
+   path('add-profile-employee/', views.add_employee_profile),
+
 ]
+
+

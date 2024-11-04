@@ -1,0 +1,85 @@
+{% extends "custom_admin/navbar.html" %}
+{% block title %}Task Submissions {% endblock title %}
+{% block body %}
+<style>
+    body {
+        background-color: #f9f9f9;
+    }
+    .container {
+        margin-top: 50px;
+    }
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+    .card-header {
+        background-color: #6F58E0;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+        border-radius: 15px 15px 0 0;
+    }
+    .task-info {
+        padding: 20px;
+    }
+    .task-info strong {
+        color: #333;
+    }
+    .assignment-link {
+        color: #DE5499;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .assignment-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="container">
+    <h1 class="text-center mb-5">Interns Task Submissions</h1>
+
+    <!-- Search Form -->
+    <form method="GET" action="" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search by student name or Project title" value="{{ request.GET.search }}">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+
+    <!-- Loop through tasks -->
+    {% for project in projects %}
+    <div class="card">
+        <div class="card-header">
+            {{ project.project_title }}
+        </div>
+        <div class="card-body task-info">
+            <p><strong>Student Name:</strong> {{ project.user.username }}</p>
+            <p><strong>Project Description:</strong> {{ project.project_description }}</p>
+            <p><strong>Project File:</strong> 
+                {% if project.assignment %}
+                    <a href="{{ project.project_file.url }}" class="assignment-link" target="_blank">View Project</a>
+                {% else %}
+                    <span class="text-danger">File not uploaded yet</span>
+                {% endif %}
+            </p>
+            <p><strong>Project Link:</strong> 
+                {% if project.assignment %}
+                    <a href="{{ project.project_link.url }}" class="assignment-link" target="_blank">View Project</a>
+                {% else %}
+                <span class="text-danger">File not uploaded yet</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Show a message if no tasks are found -->
+    {% if not projects %}
+    <div class="alert alert-warning">
+        No tasks found matching your search criteria.
+    </div>
+    {% endif %}
+</div>
+{% endblock body %}

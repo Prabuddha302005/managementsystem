@@ -1,0 +1,86 @@
+{% extends "custom_admin/navbar.html" %}
+{% block title %}Starx-Admin-Panel{% endblock title %}
+{% block body %}
+<style>
+    body {
+        background-color: #f4f7fc;
+    }
+    .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #5a67d8;
+    }
+    .btn-custom {
+        background-color: #5a67d8;
+        color: #fff;
+    }
+    .btn-custom:hover {
+        background-color: #434190;
+    }
+    .form-label {
+        color: #4a5568;
+    }
+</style>
+{% if messages %}
+    <div class="container mt-5">
+        {% for message in messages %}
+        {% if message.tags == "success" %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% else %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+<div class="container">
+    <div class="form-container">
+        <h2>Assign Tasks to Intern</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Student Name Dropdown -->
+            <div class="mb-3" >
+                <label for="internname" class="form-label">Intern Name</label>
+                <select class="form-select" id="internname" name="internname" required>
+                    <option selected disabled>Select Intern</option>
+                    {% for intern in intern %}
+                    <option value="{{intern.user_id}}">{{intern.user.username}}, {{intern.internship_name}} </option>
+                    {% endfor %}
+                    <!-- Add more options as per your students -->
+                </select>
+            </div>
+
+            <!-- Notes Title Input -->
+            <div class="mb-3">
+                <label for="notesTitle" class="form-label">Task Title</label>
+                <input type="text" class="form-control" id="notesTitle" placeholder="Enter Task Title" name="task_title" required>
+            </div>
+
+            <!-- Notes PDF Upload -->
+            <div class="form-floating">
+                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" name="description"></textarea>
+                <label for="floatingTextarea2">Task Description</label>
+              </div>
+
+            <!-- Submit Button -->
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-custom">Assign Task</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock body %}

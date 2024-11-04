@@ -1,0 +1,119 @@
+{% extends "custom_admin/navbar.html" %}
+{% block title %}Starx-Admin-Panel{% endblock title %}
+{% block body %}
+<style>
+    /* Custom Form Styling */
+    body {
+        background-color: #f7f9fc;
+        font-family: 'Arial', sans-serif;
+    }
+    .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    .form-control {
+        border-radius: 10px;
+        border: 1px solid #ced4da;
+        box-shadow: none;
+        padding: 10px 15px;
+    }
+    .form-control:focus {
+        border-color: #6f58e0;
+        box-shadow: 0 0 5px rgba(111, 88, 224, 0.5);
+    }
+    .btn-custom {
+        background-color: #6f58e0;
+        border-color: #6f58e0;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    .btn-custom:hover {
+        background-color: #563ec9;
+        border-color: #563ec9;
+        box-shadow: 0 4px 12px rgba(111, 88, 224, 0.2);
+    }
+</style>
+</head>
+<body>
+
+<div class="form-container">
+    {% if messages %}
+    <div class="container mt-5">
+        {% for message in messages %}
+        {% if message.tags == "success" %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% else %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+<h2 class="text-center">Add Employee Profile</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    <!-- Username Field -->
+    <div class="mb-3">
+        <label for="employeename" class="form-label">Employee Name</label>
+        <select class="form-select" id="employeename" name="username" required>
+            <option selected disabled>Select Employee</option>
+            {% for users in users %}
+            <option value="{{users.id}}">{{users.username}}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Course and Remark Fields -->
+    <div class="form-group">
+        <label for="id_course">Designation</label>
+        <input type="text" class="form-control" id="id_course" name="designation" placeholder="Enter Designation">
+    </div>
+
+    <!-- Salary Section -->
+    <div class="form-group">
+        <label for="id_total_fees">Monthly Salary</label>
+        <input type="number" class="form-control" id="id_monthly_salary" name="monthly_salary" placeholder="Enter Monthly Salary" required>
+    </div>
+
+    <div class="form-group">
+        <label for="id_pending_fees">Annual Salary</label>
+        <input type="number" class="form-control" id="id_annual_salary" name="annual_salary" readonly>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-custom btn-block mt-3">Add Profile</button>
+</form>
+
+<script>
+    // JavaScript to calculate pending fees dynamically
+    document.getElementById('id_monthly_salary').addEventListener('input', calculateAnnualSalary);
+    document.getElementById('id_annual_salary').addEventListener('input', calculateAnnualSalary);
+
+    function calculateAnnualSalary() {
+        let monthly_salary = parseFloat(document.getElementById('id_monthly_salary').value) || 0;
+        let total_salary = monthly_salary * 12;
+
+        // Set the calculated pending fees in the pending fees input
+        document.getElementById('id_annual_salary').value = total_salary;
+    }
+</script>
+
+{% endblock body %}

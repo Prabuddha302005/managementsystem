@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from decimal import Decimal
+import datetime
 # Create your models here.
 
 
@@ -53,3 +54,16 @@ class InternProject(models.Model):
 
     def __str__(self):
         return self.project_title
+    
+class FeesIntern(models.Model):
+    time = datetime.datetime.now()
+    intern_profile = models.ForeignKey(InternProfile, on_delete=models.CASCADE)  # Link to the StudentProfile
+    total_fees = models.DecimalField(max_digits=10, decimal_places=2)  # Total fee amount
+    paid_fees = models.DecimalField(max_digits=10, decimal_places=2)   # Amount paid
+    pending_fees = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))  # Automatically calculated
+    fees_remark = models.TextField(blank=True, null=True)  # Optional remark
+    date_time = models.DateTimeField(default=time)
+    def save(self, *args, **kwargs):
+        # Automatically calculate the pending fees before saving
+        self.pending_fees = float(self.total_fees) - float(self.paid_fees)
+        super().save(*args, **kwargs)  # Call the parent class's save method
