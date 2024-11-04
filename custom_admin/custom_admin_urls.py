@@ -30,6 +30,12 @@ urlpatterns = [
 
    #employee
    path('add-profile-employee/', views.add_employee_profile),
+   path('employee/manage-profile-employee/', views.manage_employee_profile),
+   path('employee/view/<user_id>', views.view_profile_employee),
+   path('employee/edit/<user_id>', views.edit_profile_employee),
+   path('employee/salary-details', views.salary_details),
+   # path('employee/add-salary/<user_id>', views.add_salary_employee),
+   
 
 ]
 

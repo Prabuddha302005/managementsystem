@@ -1,0 +1,157 @@
+{% extends "custom_admin/navbar.html" %}
+{% block title %}Student Profile - {{ employee.user.username }}{% endblock title %}
+{% load static %}
+{% block body %}
+<style>
+  .profile-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #f0f2f5;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 50px;
+  }
+
+  .profile-details {
+    width: 60%;
+    padding: 20px;
+  }
+
+  .profile-details h3 {
+    color: #6f58e0;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+
+  .profile-details label {
+    font-weight: bold;
+    color: #444;
+    margin-top: 10px;
+  }
+
+  .profile-details input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+  }
+
+  .profile-details .form-group {
+    margin-bottom: 15px;
+  }
+
+  .profile-image {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profile-image img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-image h4 {
+    margin-top: 15px;
+    color: #6f58e0;
+    font-weight: bold;
+  }
+
+  .back-btn {
+    background-color: #6f58e0;
+    color: white;
+    border-radius: 25px;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 30px;
+    transition: background-color 0.3s ease;
+  }
+
+  .back-btn:hover {
+    background-color: #5a47c4;
+    text-decoration: none;
+  }
+
+</style>
+{% if messages %}
+    <div class="container mt-5">
+        {% for message in messages %}
+        {% if message.tags == "success" %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% else %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+<div class="container profile-container">
+  <div class="profile-details">
+    <h3>Employee Profile - {{ employee.user.username }}</h3>
+    <form method="POST">
+        {% csrf_token %}
+      <div class="form-group">
+        <label>Username</label> 
+        <input type="text" value="{{ employee.user.username }}" name="username" readonly >
+      </div>
+
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" value="{{ employee.user.first_name }}" name="first_name" >
+      </div>
+
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" value="{{ employee.user.last_name }}" name="last_name" >
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="text" value="{{ employee.phone }}" name="phone_number">
+      </div>
+
+      <div class="form-group">
+        <label>Designation</label>
+        <input type="text" value="{{ employee.designation }}" name="designation">
+      </div>
+
+      <div class="form-group">
+        <label>Education</label>
+        <input type="text" value="{{ employee.education }}" name="education">
+      </div>
+
+      <div class="form-group">
+        <label>Monthly Salary (In rupees)</label>
+        <input type="text" value="₹ {{ employee.monthly_salary }}" readonly>
+      </div>
+      <div class="form-group">
+        <label>Annual Salary (In rupees)</label>
+        <input type="text" value="₹ {{ employee.total_salary }}" readonly>
+      </div>
+      <button type="submit" class="submit-btn">Save Changes</button>
+      <a href="/custom-admin/employee/manage-profile-employee/" class="back-btn">Cancel</a>
+    </form>
+  </div>
+  
+  <div class="profile-image">
+      <img src="{{ employee.image.url }}" alt="Profile Picture of {{ employee.user.username }}">
+      <h4>{{ employee.user.username }}</h4>
+  </div>
+</div>
+{% endblock body %}

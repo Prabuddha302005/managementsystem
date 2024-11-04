@@ -53,7 +53,7 @@
 <div class="container">
   <div class="card">
     <div class="card-header">
-      <h4 class="mb-0">Manage Profiles - Interns</h4>
+      <h4 class="mb-0">Manage Profiles - Employees</h4>
     </div>
     <div class="card-body">
       <div class="row mb-3">
@@ -67,7 +67,13 @@
             </div>
             </div>
         <div class="col-md-6 text-end filter-section">
-          
+          <!-- <select class="form-select d-inline-block w-auto me-2">
+            <option value="">Sort by</option>
+            <option value="name">Name</option>
+            <option value="date">Date Added</option>
+            <option value="status">Status</option>
+          </select> -->
+        
         </div>
       </div>
       
@@ -79,8 +85,9 @@
             <th>#</th>
             <th>Name</th>
             <th>Phone Number</th>
-            <th>Parent number</th>
-            <th>Internship Enrolled</th>
+            <th>Designation</th>
+            <th>Monthly Salary</th>
+            <th>Annual Salary</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -90,14 +97,15 @@
             <td>{{forloop.counter}}</td>
             <td>{{profile.user}}</td>
             <td>{{profile.phone}}</td>
-            <td>{{profile.parent_number}}</td>
-            
-            <td><span class="badge bg-success">{{profile.internship_name}}</span></td>
+            <td>{{profile.designation}}</td>
+            <td>₹ {{profile.monthly_salary}}</td>
+            <td>₹ {{profile.total_salary}}</td>
+   
             <td class="profile-actions">
-              <a href="/custom-admin/interns/view/{{profile.user_id}}"><button class="btn btn-info btn-sm">View</button></a>
-              <a href="/custom-admin/interns/edit/{{profile.user_id}}"><button class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</button></a>
-              <a href="/custom-admin/interns/update-fees/{{profile.user_id}}"><button class="btn btn-success btn-sm"><i class="bi bi-currency-rupee"></i> Update fees</button></a>
-              <a href="/custom-admin/interns/fees-history/{{profile.user_id}}"><button class="btn btn-secondary   btn-sm"><i class="bi bi-clock-history"></i> fees history</button></a>
+              <a href="/custom-admin/employee/view/{{profile.user_id}}"><button class="btn btn-info btn-sm">View</button></a>
+              <a href="/custom-admin/employee/edit/{{profile.user_id}}"><button class="btn btn-warning btn-sm"><i class="bi bi-pencil-square"></i> Edit</button></a>
+              <!-- <a href="/custom-admin/employee/add-salary/{{profile.user_id}}"><button class="btn btn-success btn-sm"><i class="bi bi-currency-rupee"></i> Add salary</button></a>
+              <a href="/custom-admin/employee/salary-history/{{profile.user_id}}"><button class="btn btn-secondary   btn-sm"><i class="bi bi-clock-history"></i> Salary history</button></a> -->
             </td>
           </tr>
 

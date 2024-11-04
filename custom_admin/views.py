@@ -6,7 +6,7 @@ from interns.models import InternProfile, InternNotes, InternProject, FeesIntern
 from employee.models import EmployeeProfile
 from django.contrib import messages
 from django.db.models import Q
-
+from django.conf import settings
 # Create your views here.
 
 def admin_login(request):
@@ -487,13 +487,79 @@ def add_employee_profile(request):
         else:
 
             save_profile = EmployeeProfile.objects.create(user_id=username, designation=designation, monthly_salary=monthly_salary, total_salary=annual_salary)
-
-            # FeesIntern.objects.create(
-            #     intern_profile=save_profile,  # Link to the intern profile instance
-            #     total_fees=total_fees,
-            #     paid_fees=paid_fees,
-            #     pending_fees=pending_fees,  # Automatically calculated
-            #     fees_remark=fees_remark
-            # )
             messages.success(request, "Profile created sucessfully.")
     return render(request, "custom_admin/admin_employees/add_profile_employee.html", context=data)
+
+def manage_employee_profile(request):
+    data={}
+    course = request.GET.get('course')
+    get_employee_profiles = EmployeeProfile.objects.all()
+    if course:
+        get_intern_profiles = EmployeeProfile.objects.filter(internship_name__icontains=course)
+    
+    else:
+        get_employee_profiles = EmployeeProfile.objects.all()
+    if request.method == "POST":
+        query = request.POST.get('search')
+
+        if query:
+           get_employee_profiles = EmployeeProfile.objects.filter(Q(user__username__icontains=query) | Q (user__first_name__icontains=query) | Q(user__last_name__icontains=query))
+      
+    data['all_profiles'] = get_employee_profiles
+    return render(request, "custom_admin/admin_employees/manage_profile_employee.html", context=data)
+
+def view_profile_employee(request, user_id):
+    data={}
+    get_user = EmployeeProfile.objects.get(user_id = user_id)
+    data['employee'] = get_user
+    print(get_user.image)
+    if not get_user.image:
+        get_user.image = f"{settings.STATIC_URL}default_profile.jpg"
+    return render(request, "custom_admin/admin_employees/view_profile_employee.html", context=data)
+
+def edit_profile_employee(request, user_id):
+    data = {}
+    try:
+        get_user_profile = EmployeeProfile.objects.get(user_id=user_id)
+        get_user = User.objects.get(id=user_id)
+        data['employee'] = get_user_profile
+
+        if not get_user_profile.image:
+            get_user_profile.image = f"{settings.STATIC_URL}default_profile.jpg"
+
+        if request.method == "POST":
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            phone_number = request.POST['phone_number']
+            designation = request.POST['designation']
+            education = request.POST['education']
+
+            # Update user fields
+            get_user.first_name = first_name
+            get_user.last_name = last_name
+            get_user.save()
+
+            # Update profile fields
+            get_user_profile.phone = phone_number
+            get_user_profile.designation = designation
+            get_user_profile.education = education
+            get_user_profile.save()  # Save profile changes
+
+            messages.success(request, "Data saved successfully.")
+    except EmployeeProfile.DoesNotExist:
+        messages.error(request, "Employee profile not found.")
+    except Exception as e:
+        messages.error(request, f"An error occurred: {str(e)}")
+
+    return render(request, "custom_admin/admin_employees/edit_profile_employee.html", context=data)
+
+def salary_details(request):
+    data={}
+    get_employee = EmployeeProfile.objects.all()
+    data['employees'] = get_employee
+    total_salary = 0
+
+    for employee in get_employee:
+        total_salary += employee.monthly_salary
+    data['total_salary'] = total_salary
+    return render(request, "custom_admin/admin_employees/salary_details.html", context=data)
