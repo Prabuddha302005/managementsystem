@@ -167,6 +167,8 @@ def view_profile_student(request, user_id):
     data={}
     get_user = StudentProfile.objects.get(user_id = user_id)
     data['student'] = get_user
+    if not get_user.image:
+        get_user.image = f"{settings.STATIC_URL}default_profile.jpg"
     return render(request, "custom_admin/admin_students/view_profile.html", context=data)
 
 def edit_profile_student(request, user_id):
@@ -225,7 +227,7 @@ def update_student_fees(request, user_id):
 
         # Display a success message
         messages.success(request, "Payment successfully added and fees updated.")
-        return redirect('fees_list')  # Redirect to the fees list or appropriate page
+      # Redirect to the fees list or appropriate page
 
     # Pass data to the template for display
     data = {
@@ -302,6 +304,8 @@ def view_profile_intern(request, user_id):
     data={}
     get_user = InternProfile.objects.get(user_id = user_id)
     data['intern'] = get_user
+    if not get_user.image:
+        get_user.image = f"{settings.STATIC_URL}default_profile.jpg"
     
     return render(request, "custom_admin/admin_interns/view_profile.html", context=data)
 
@@ -311,6 +315,8 @@ def edit_profile_intern(request, user_id):
         get_user_profile = InternProfile.objects.get(user_id = user_id)
         get_user = User.objects.get(id=user_id)
         data['intern'] = get_user_profile
+        if not get_user_profile.image:
+           get_user_profile.image = f"{settings.STATIC_URL}default_profile.jpg"
 
 
         if(request.method=="POST"):

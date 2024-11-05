@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render # type: ignore
 from students.models import StudentProfile, StudentsTasks, StudentsNotes
 from django.contrib.auth.models import User
 from django.contrib import messages
