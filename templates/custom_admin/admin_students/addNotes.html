@@ -29,6 +29,23 @@
         color: #4a5568;
     }
 </style>
+{% if messages %}
+<div class="container mt-5">
+    {% for message in messages %}
+    {% if message.tags == "success" %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% else %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
 <div class="container">
     <div class="form-container">
         <h2>Assign Notes to Students</h2>
@@ -56,7 +73,6 @@
             <div class="mb-3">
                 <label for="notesPDF" class="form-label">Upload Notes (PDF)</label>
                 <input class="form-control" type="file" id="notesPDF" name="notesfile" required>
-
             </div>
 
             <!-- Submit Button -->

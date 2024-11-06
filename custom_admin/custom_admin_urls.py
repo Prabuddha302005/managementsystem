@@ -14,6 +14,7 @@ urlpatterns = [
    path('students/check-task/', views.studentAssignTaskCheck),
    path('students/update-fees/<user_id>', views.update_student_fees),
    path('students/fees-history/<user_id>', views.student_fees_history),
+   path('students/delete/<user_id>', views.delete_student_profile),
 
    # interns 
    path('add-profile-intern/', views.add_intern_profile),
@@ -27,6 +28,7 @@ urlpatterns = [
    path('interns/assign-task/', views.internAssignTasks),
    path('interns/check-tasks/', views.internCheckTask),
    path('interns/check-projects/', views.internCheckProjects),
+   path('interns/delete/<user_id>', views.delete_intern_profile),
 
    #employee
    path('add-profile-employee/', views.add_employee_profile),
@@ -34,7 +36,7 @@ urlpatterns = [
    path('employee/view/<user_id>', views.view_profile_employee),
    path('employee/edit/<user_id>', views.edit_profile_employee),
    path('employee/salary-details', views.salary_details),
-   # path('employee/add-salary/<user_id>', views.add_salary_employee),
+   path('employee/delete/<user_id>', views.delete_employee),
    
 
 ]

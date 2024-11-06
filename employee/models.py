@@ -6,10 +6,10 @@ class EmployeeProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     # Personal Information
-    phone = models.CharField(max_length=50, null=True, blank=True)
-    email = models.EmailField(null=True, blank=True)
     designation = models.CharField(max_length=100, null=True, blank=True)
-    education = models.CharField(max_length=100, null=True, blank=True)
+    birth_date = models.DateField(null=True)
+    aadhaar_number = models.BigIntegerField(null=True)
+    phone = models.CharField(max_length=50, null=True, blank=True)
     image = models.ImageField(upload_to='employee_images/', null=True, blank=True)
 
     # Salary Information

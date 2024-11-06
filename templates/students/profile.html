@@ -123,10 +123,10 @@
                 {% endif %}
                       <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <div class="mb-3" style="position: relative;">
+                        <!-- <div class="mb-3" style="position: relative;">
                             <input type="file" class="container form-control" id="image" name="image" 
-                            style=" margin-top: 10px; width: 150px; padding: 5px; font-size: 12px;">
-                        </div>
+                            style=" margin-top: 10px; width: 150px; padding: 5px; font-size: 12px;" disabled>
+                        </div> -->
                     </div>
                    
                   <h5 class="card__title">{{user.username}}</h5>
@@ -147,21 +147,21 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="phone">Phone</label>
-                    <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number" name="phone" value="{{ profile.phone }}">
+                    <input type="tel" class="form-control" id="phone" placeholder="Enter your phone number" name="phone" value="{{ profile.phone }}" disabled>
                 </div>
                 <div class="form-group">
                     <label for="parent-number">Parent Number</label>
-                    <input type="tel" class="form-control" id="parent-number" placeholder="Enter your parent’s phone number" name="parent_number" value="{{ profile.parent_number }}">
+                    <input type="tel" class="form-control" id="parent-number" placeholder="Enter your parent’s phone number" name="parent_number" value="{{ profile.parent_number }}" disabled>
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" placeholder="Enter your email address" name="email" value="{{ user.email }}">
+                    <input type="email" class="form-control" id="email" placeholder="Enter your email address" name="email" value="{{ user.email }}" disabled>
                 </div>
                 <div class="form-group">
                     <label for="education">Education</label>
-                    <input type="text" class="form-control" id="education" placeholder="Enter your education details" name="education" value="{{ profile.education }}" >
+                    <input type="text" class="form-control" id="education" placeholder="Enter your education details" name="education" value="{{ profile.education }}" disabled>
                 </div>
-                <button type="submit" class="btn btn-primary btn-submit mt-3">Save</button>
+                <!-- <button type="submit" class="btn btn-primary btn-submit mt-3" disabled>Save</button> -->
             
             </form>
             

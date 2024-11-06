@@ -13,7 +13,8 @@ class InternProfile(models.Model):
     education = models.CharField(max_length=100, null=True, blank=True)
     remark = models.CharField(max_length=255, null=True, blank=True)
     image = models.ImageField(upload_to='intern_images/', null=True, blank=True)
-
+    birth_date = models.DateField(null=True)
+    aadhaar_number = models.BigIntegerField(null=True)
     # Fees fields
     total_fees = models.FloatField(null=True, blank=True)
     fees_paid = models.FloatField(null=True, blank=True)
@@ -28,8 +29,8 @@ class InternProfile(models.Model):
 class InternTasks(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Allows multiple tasks for one user
     task_title = models.CharField(max_length=255)  # You can add a task title or identifier
-    task_description = models.TextField()
-    assignment = models.FileField(upload_to='intern_assignments/', max_length=100)
+    task_pdf = models.FileField(upload_to='assigned_intern_taks/', max_length=100)
+    assignment = models.FileField(upload_to='intern_assignments_tasks/', max_length=100)
 
     def __str__(self):
         return f"Task for {self.user.username}: {self.task_title}"
@@ -47,9 +48,9 @@ class InternNotes(models.Model):
 class InternProject(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     project_title = models.CharField(max_length=255)
-    project_description = models.TextField(blank=True, null=True)
     project_link = models.URLField(max_length=500, blank=True, null=True)  # Optional field for links (e.g., GitHub)
-    project_file = models.FileField(upload_to='intern_projects/', max_length=100, blank=True, null=True)  # Optional field for ZIP file
+    project_pdf = models.FileField(upload_to='assigned_intern_projects/', max_length=100)
+    project_file = models.FileField(upload_to='intern_projects_submission/', max_length=100, blank=True, null=True)  # Optional field for ZIP file
     submission_date = models.DateTimeField(auto_now_add=True)  # Automatically saves the date of project submission
 
     def __str__(self):
@@ -62,6 +63,7 @@ class FeesIntern(models.Model):
     paid_fees = models.DecimalField(max_digits=10, decimal_places=2)   # Amount paid
     pending_fees = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))  # Automatically calculated
     fees_remark = models.TextField(blank=True, null=True)  # Optional remark
+    installment_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     date_time = models.DateTimeField(default=time)
     def save(self, *args, **kwargs):
         # Automatically calculate the pending fees before saving

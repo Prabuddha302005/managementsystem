@@ -23,9 +23,10 @@
         {% for task in tasks %}
         <div class="card my-3 p-3">
             <h5>{{ task.task_title }}</h5>
-            <p>{{ task.task_description }}</p>
+            <a class="w-50" href="{{ task.task_pdf.url }}" target="_blank" class="btn btn-primary">Click
+                to view Task</a>
             {% if task.assignment %}
-    <div class="alert alert-success mt-3" role="alert">
+    <div class="alert alert-success mt-5" role="alert">
         <h5 class="alert-heading"><i class="bi bi-file-earmark-check-fill"></i> File Uploaded</h5>
         <p>Uploaded file: <strong>{{ task.assignment.name }}</strong></p>
         <a href="{{ task.assignment.url }}" class="btn btn-outline-primary btn-sm" target="_blank">
@@ -38,7 +39,8 @@
                 {% csrf_token %}
                 <div class="input-group mb-3">
                     <input type="hidden" name="task_id" value="{{ task.id }}">
-                    <input type="file" class="form-control" name="assignment_file" id="inputGroupFile{{ forloop.counter }}">
+                   
+                    <input type="file" class="form-control mt-5" name="assignment_file" id="inputGroupFile{{ forloop.counter }}">
                     <label class="input-group-text" for="inputGroupFile{{ forloop.counter }}">Upload Assignment</label>
                 </div>
                 <button type="submit" class="btn btn-primary">Submit Assignment</button>

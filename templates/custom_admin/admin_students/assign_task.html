@@ -29,6 +29,23 @@
         color: #4a5568;
     }
 </style>
+{% if messages %}
+<div class="container mt-5">
+    {% for message in messages %}
+    {% if message.tags == "success" %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% else %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
 <div class="container">
     <div class="form-container">
         <h2>Assign Tasks to Students</h2>
@@ -52,11 +69,11 @@
                 <input type="text" class="form-control" id="notesTitle" placeholder="Enter Task Title" name="task_title" required>
             </div>
 
-            <!-- Notes PDF Upload -->
-            <div class="form-floating">
-                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px" name="description"></textarea>
-                <label for="floatingTextarea2">Task Description</label>
-              </div>
+            <!-- Task Life Upload -->
+            <div class="mb-3">
+                <label for="notesPDF" class="form-label">Upload Task (PDF)</label>
+                <input class="form-control" type="file" id="TaskFile" name="taskfile" required>
+            </div>
 
             <!-- Submit Button -->
             <div class="text-center mt-3">

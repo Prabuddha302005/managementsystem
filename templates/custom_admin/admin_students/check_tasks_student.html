@@ -1,39 +1,77 @@
 {% extends "custom_admin/navbar.html" %}
-{% block title %}Task Submissions {% endblock title %}
+{% block title %}Task Submissions{% endblock title %}
 {% block body %}
 <style>
     body {
-        background-color: #f9f9f9;
+        background-color: #f3f4f6;
+        font-family: 'Roboto', sans-serif;
     }
     .container {
-        margin-top: 50px;
+        margin-top: 40px;
+    }
+    h1 {
+        font-weight: 700;
+        color: #6F58E0;
     }
     .card {
-        border-radius: 15px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+    .card:hover {
+        transform: scale(1.02);
     }
     .card-header {
         background-color: #6F58E0;
-        color: white;
-        font-size: 1.5rem;
+        color: #fff;
+        font-size: 1.25rem;
         font-weight: bold;
-        text-align: center;
-        border-radius: 15px 15px 0 0;
+        padding: 15px;
+        border-radius: 10px 10px 0 0;
     }
     .task-info {
         padding: 20px;
     }
-    .task-info strong {
-        color: #333;
+    .task-info p {
+        margin-bottom: 8px;
+        font-size: 1rem;
+        color: #444;
     }
     .assignment-link {
         color: #DE5499;
         text-decoration: none;
-        font-weight: bold;
+        font-weight: 500;
     }
     .assignment-link:hover {
         text-decoration: underline;
+        color: #D23D77;
+    }
+    .input-group .form-control {
+        border-radius: 25px 0 0 25px;
+    }
+    .input-group .btn {
+        border-radius: 0 25px 25px 0;
+        background-color: #6F58E0;
+        border: none;
+    }
+    .btn-primary:hover {
+        background-color: #5C4BB5;
+    }
+    .text-danger {
+        color: #D23D77 !important;
+    }
+    .badge-status {
+        font-size: 0.85rem;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+    .badge-success {
+        background-color: #4CAF50;
+        color: white;
+    }
+    .badge-warning {
+        background-color: #FF9800;
+        color: white;
     }
 </style>
 
@@ -44,20 +82,26 @@
     <form method="GET" action="" class="mb-4">
         <div class="input-group">
             <input type="text" name="search" class="form-control" placeholder="Search by student name or task title" value="{{ request.GET.search }}">
-            <button class="btn btn-primary" type="submit">Search</button>
+            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Search</button>
         </div>
     </form>
 
     <!-- Loop through tasks -->
     {% for task in tasks %}
-    <div class="card">
-        <div class="card-header">
-            {{ task.task_title }}
+    <div class="card mb-4">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <span>{{ task.task_title }}</span>
+            <!-- Badge indicating task status -->
+            {% if task.assignment %}
+                <span class="badge badge-status badge-success">Submitted</span>
+            {% else %}
+                <span class="badge badge-status badge-warning">Pending</span>
+            {% endif %}
         </div>
         <div class="card-body task-info">
-            <p><strong>Student Name:</strong> {{ task.user.username }}</p>
-            <p><strong>Task Description:</strong> {{ task.task_description }}</p>
-            <p><strong>Assignment File:</strong> 
+            <p><strong><i class="bi bi-person-fill"></i> Student Name:</strong> {{ task.user.username }}</p>
+            <p><strong><i class="bi bi-journal-text"></i> Task Title:</strong> {{ task.task_title }}</p>
+            <p><strong><i class="bi bi-file-earmark-arrow-down-fill"></i> Assignment File:</strong>
                 {% if task.assignment %}
                     <a href="{{ task.assignment.url }}" class="assignment-link" target="_blank">View Assignment</a>
                 {% else %}
@@ -70,7 +114,7 @@
 
     <!-- Show a message if no tasks are found -->
     {% if not tasks %}
-    <div class="alert alert-warning">
+    <div class="alert alert-warning text-center">
         No tasks found matching your search criteria.
     </div>
     {% endif %}

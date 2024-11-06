@@ -5,26 +5,32 @@
     <h2 class="text-center mb-4">Upload Your Projects</h2>
 
     {% if projects %}
-        <div class="row">
-            <!-- Loop through each project -->
-            {% for project in projects %}
-            <div class="col-md-6">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <h4 class="card-title">{{ project.project_title }}</h4>
-                        <p class="card-text">{{ project.project_description }}</p>
-                        <form method="POST" enctype="multipart/form-data">
-                            {% csrf_token %}
+    <div class="row">
+        <!-- Loop through each project -->
+        {% for project in projects %}
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">{{ project.project_title }}</h4>
+                    <a class="w-50" href="{{ project.project_pdf.url }}" target="_blank" class="btn btn-primary">Click
+                        to view Project</a>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
                         <!-- Link upload -->
                         <div class="mb-3">
                             <input type="hidden" name="project_id" value="{{ project.id }}">
-                            <label for="projectLink{{ forloop.counter }}" class="form-label">Project Link (GitHub, etc.)</label>
-                            <input type="url" class="form-control" name="project_link" id="projectLink{{ forloop.counter }}" placeholder="Enter your project link" value="{{ project.project_link }}">
+                            <label for="projectLink{{ forloop.counter }}" class="form-label">Project Link (GitHub,
+                                etc.)</label>
+                            <input type="url" class="form-control" name="project_link"
+                                id="projectLink{{ forloop.counter }}" placeholder="Enter your project link"
+                                value="{{ project.project_link|default:'' }}">
                         </div>
                         <!-- File upload -->
                         <div class="mb-3">
-                            <label for="inputGroupFile{{ forloop.counter }}" class="form-label">Or Upload Project (ZIP)</label>
-                            <input type="file" class="form-control" name="assignment_file" id="inputGroupFile{{ forloop.counter }}">
+                            <label for="inputGroupFile{{ forloop.counter }}" class="form-label">Or Upload Project
+                                (ZIP)</label>
+                            <input type="file" class="form-control" name="assignment_file"
+                                id="inputGroupFile{{ forloop.counter }}">
                         </div>
 
                         <!-- Upload button -->
@@ -32,27 +38,28 @@
                             <i class="bi bi-cloud-upload-fill"></i> Upload
                         </button>
                     </form>
-                        <!-- If project uploaded, show success message -->
-                        {% if project.project_file %}
-                        <div class="alert alert-success mt-3" role="alert">
-                            <h6 class="alert-heading"><i class="bi bi-check-circle-fill"></i> Project Uploaded Successfully</h6>
-                            <p>Uploaded File: <strong>{{ project.project_file.name }}</strong></p>
-                            <a href="{{ project.project_file.url }}" class="btn btn-outline-primary btn-sm" target="_blank">
-                                <i class="bi bi-download"></i> Download File
-                            </a>
-                        </div>
-                        {% endif %}
-
+                    <!-- If project uploaded, show success message -->
+                    {% if project.project_file %}
+                    <div class="alert alert-success mt-3" role="alert">
+                        <h6 class="alert-heading"><i class="bi bi-check-circle-fill"></i> Project Uploaded Successfully
+                        </h6>
+                        <p>Uploaded File: <strong>{{ project.project_file.name }}</strong></p>
+                        <a href="{{ project.project_file.url }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                            <i class="bi bi-download"></i> Download File
+                        </a>
                     </div>
+                    {% endif %}
+
                 </div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
+    </div>
 
     {% else %}
-        <div class="text-center">
-            <h4>There are no projects to upload at the moment.</h4>
-        </div>
+    <div class="text-center">
+        <h4>There are no projects to upload at the moment.</h4>
+    </div>
     {% endif %}
 </div>
 

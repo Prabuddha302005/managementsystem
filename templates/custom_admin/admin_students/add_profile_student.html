@@ -8,7 +8,7 @@
         font-family: 'Arial', sans-serif;
     }
     .form-container {
-        max-width: 600px;
+        max-width: 700px;
         margin: 50px auto;
         padding: 30px;
         background-color: #fff;
@@ -19,6 +19,10 @@
         color: #333;
         font-size: 24px;
         margin-bottom: 20px;
+        text-align: center;
+    }
+    .form-group {
+        margin-bottom: 15px;
     }
     .form-control {
         border-radius: 10px;
@@ -37,6 +41,7 @@
         padding: 10px 20px;
         border-radius: 10px;
         transition: all 0.3s ease;
+        width: 100%;
     }
     .btn-custom:hover {
         background-color: #563ec9;
@@ -44,78 +49,118 @@
         box-shadow: 0 4px 12px rgba(111, 88, 224, 0.2);
     }
 </style>
-</head>
-<body>
 
 <div class="form-container">
     {% if messages %}
     <div class="container mt-5">
         {% for message in messages %}
-        {% if message.tags == "success" %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        {% else %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
         {% endfor %}
     </div>
     {% endif %}
-<h2 class="text-center">Add Student Profile</h2>
-
-<form method="POST">
-    {% csrf_token %}
     
-    <!-- Username Field -->
-    <div class="mb-3">
-        <label for="studentName" class="form-label">Student Name</label>
-        <select class="form-select" id="studentName" name="username" required>
-            <option selected disabled>Select Student</option>
-            {% for users in users %}
-            <option value="{{users.id}}">{{users.username}}</option>
-            {% endfor %}
-        </select>
-    </div>
+    <h2 class="text-center">Add Student Profile</h2>
 
-    <!-- Course and Remark Fields -->
-    <div class="form-group">
-        <label for="id_course">Course enrolled</label>
-        <input type="text" class="form-control" id="id_course" name="course_name" placeholder="Enter course">
-    </div>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-md-6">
+                <p>Student Information</p>
+                <!-- Username Field -->
+                <div class="form-group">
+                    <label for="studentName" class="form-label">Student Name</label>
+                    <select class="form-select" id="studentName" name="username" required>
+                        <option selected disabled>Select Student</option>
+                        {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <!-- Course Field -->
+                <div class="form-group">
+                    <label for="id_course">Course enrolled</label>
+                    <input type="text" class="form-control" id="id_course" name="course_name" placeholder="Enter course">
+                </div>
 
-    <div class="form-group">
-        <label for="id_remark">Remark</label>
-        <input type="text" class="form-control" id="id_remark" name="remark" placeholder="Enter remark">
-    </div>
+                <!-- Date of Birth -->
+                <div class="form-group">
+                    <label for="id_birth_date">Date of Birth</label>
+                    <input type="date" class="form-control" id="id_birth_date" name="birth_date" required>
+                </div>
 
-    <!-- Fees Section -->
-    <div class="form-group">
-        <label for="id_total_fees">Total Fees</label>
-        <input type="number" class="form-control" id="id_total_fees" name="total_fees" placeholder="Total fees" required>
-    </div>
+                <!-- Aadhaar Number -->
+                <div class="form-group">
+                    <label for="id_addhar_number">Aadhaar Number</label>
+                    <input type="number" class="form-control" id="id_addhar_number" name="addhar_number" placeholder="Aadhaar Number" required>
+                </div>
 
-    <div class="form-group">
-        <label for="id_paid_fees">Paid Fees</label>
-        <input type="number" class="form-control" id="id_paid_fees" name="paid_fees" placeholder="Paid fees" required>
-    </div>
+                <!-- Parent Number -->
+                <div class="form-group">
+                    <label for="id_student_number">Student Number</label>
+                    <input type="number" class="form-control" id="id_student_number" name="student_number" placeholder="Student Number" required>
+                </div>
 
-    <div class="form-group">
-        <label for="id_pending_fees">Pending Fees</label>
-        <input type="number" class="form-control" id="id_pending_fees" name="pending_fees" readonly>
-    </div>
+                <div class="form-group">
+                    <label for="id_parent_number">Parent Number</label>
+                    <input type="number" class="form-control" id="id_parent_number" name="parent_number" placeholder="Parent Number" required>
+                </div>
+                <div class="form-group">
+                    <label for="education">Education</label>
+                    <input type="text" class="form-control" id="education" placeholder="Education details" name="education" >
+                </div>
+                
+                <div class="mb-3">
+                    <label for="formFile" class="form-label">Student Photo</label>
+                    <input class="form-control" type="file" id="image" name="image">
+                  </div>
+            </div>
+    
+            <!-- Right Column -->
+            <div class="col-md-6">
+                
+                <p>Fees Details</p>
+                <!-- Remark Field -->
+                <div class="form-group">
+                    <label for="id_remark">Remark</label>
+                    <input type="text" class="form-control" id="id_remark" name="remark" placeholder="Enter remark">
+                </div>
 
-    <div class="form-group">
-        <label for="id_fees_remark">Fees Remark</label>
-        <input type="text" class="form-control" id="id_fees_remark" name="fees_remark" placeholder="Fees remark">
-    </div>
+                <!-- Total Fees -->
+                <div class="form-group">
+                    <label for="id_total_fees">Total Fees</label>
+                    <input type="number" class="form-control" id="id_total_fees" name="total_fees" placeholder="Total fees" required>
+                </div>
 
-    <!-- Submit Button -->
-    <button type="submit" class="btn btn-custom btn-block mt-3">Add Profile</button>
-</form>
+                <!-- Paid Fees -->
+                <div class="form-group">
+                    <label for="id_paid_fees">Paid Fees</label>
+                    <input type="number" class="form-control" id="id_paid_fees" name="paid_fees" placeholder="Paid fees" required>
+                </div>
+
+                <!-- Pending Fees -->
+                <div class="form-group">
+                    <label for="id_pending_fees">Pending Fees</label>
+                    <input type="number" class="form-control" id="id_pending_fees" name="pending_fees" readonly>
+                </div>
+
+                <!-- Fees Remark -->
+                <div class="form-group">
+                    <label for="id_fees_remark">Fees Remark</label>
+                    <input type="text" class="form-control" id="id_fees_remark" name="fees_remark" placeholder="Fees remark">
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-custom mt-3">Add Profile</button>
+    </form>
+</div>
 
 <script>
     // JavaScript to calculate pending fees dynamically

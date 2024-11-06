@@ -1,0 +1,121 @@
+<!-- Featured work -->
+<!-- <div class="container w-100" style="background-color: #e0cbcb00;" id="portfolio">
+    <div class="container mt-5" id="services" style="color: #000;">
+        <h1 class="text-center">Featured Works</h1>
+    </div>
+    <div class="container w-50" id="services" style="color: #000;">
+        <p class="text-center">Creativity has no bar! We believe in designing and Manufacturing Best Signages and Acrylic Products for You or Your business or brand</p>
+    </div>
+
+ <div class="container-fluid py-5" id="portfolio">
+    
+    
+        <div class="row mt-5">
+            <!-- Navigation Panel -->
+            <div class="col-md-3 mb-4">
+                <div class="list-group">
+                    <button class="list-group-item list-group-item-action active" data-target="#all-work">ALL WORK</button>
+                    
+                    <button class="list-group-item list-group-item-action mt-3" data-target="#three-d-glow-signage">3D GLOW SIGNAGE</button>
+                    <button class="list-group-item list-group-item-action mt-3" data-target="#non-glow-signage">3D NON-GLOW SIGNAGE</button>
+                    <button class="list-group-item list-group-item-action mt-3" data-target="#two-d-signage">2D SIGNAGES</button>
+                    <button class="list-group-item list-group-item-action mt-3" data-target="#acp-panelling">ACP PANELLING</button>
+                    <button class="list-group-item list-group-item-action mt-3" data-target="#acrylic-nameplates">ACRYLIC NAMEPLATES</button>
+                    <button class="list-group-item list-group-item-action mt-3" data-target="#acrylic-products">ACRYLIC PRODUCTS</button>
+                    <button class="list-group-item list-group-item-action mt-3" data-target="#digital-printing">DIGITAL PRINTING</button>
+                    {% comment %} <button class="list-group-item list-group-item-action mt-3" data-target="#banner-printing">BANNER PRINTING</button> {% endcomment %}
+                </div>
+            </div>
+    
+    
+         <!-- Image Display Panel -->
+<!-- Image Display Panel -->
+<div class="col-md-9">
+    <div class="row">
+        <!-- ALL WORK Grid -->
+        <div id="all-work" class="content-grid row fade-in-image">
+            {% for image in images %}
+            <div class="images col-12 col-sm-6 col-md-4 mb-4 fade-in-image">
+                <img src="{{ image.photo.url }}" class="img-fluid rounded hover-zoom" alt="{{ image.category }}">
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- 3D GLOW SIGNAGE Grid -->
+        <div id="three-d-glow-signage" class="content-grid row">
+            {% for image in images %}
+            {% if image.category == "3d glow signage" %}
+            <div class="images col-12 col-sm-6 col-md-4 mb-4 fade-in-image">
+                <img src="{{ image.photo.url }}" class="img-fluid rounded hover-zoom" alt="{{ image.category }}">
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- NON-GLOW SIGNAGE Grid -->
+        <div id="non-glow-signage" class="content-grid row">
+            {% for image in images %}
+            {% if image.category == "3d non glow signage" %}
+            <div class="images col-12 col-sm-6 col-md-4 mb-4 fade-in-image">
+                <img src="{{ image.photo.url }}" class="img-fluid rounded hover-zoom" alt="{{ image.category }}">
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- 2D SIGNAGE Grid -->
+        <div id="two-d-signage" class="content-grid row">
+            {% for image in images %}
+            {% if image.category == "2d signages" %}
+            <div class="images col-12 col-sm-6 col-md-4 mb-4 fade-in-image">
+                <img src="{{ image.photo.url }}" class="img-fluid rounded hover-zoom" alt="{{ image.category }}">
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- ACP PANELLING Grid -->
+        <div id="acp-panelling" class="content-grid row">
+            {% for image in images %}
+            {% if image.category == "Acp panelling" %}
+            <div class="images col-12 col-sm-6 col-md-4 mb-4 fade-in-image">
+                <img src="{{ image.photo.url }}" class="img-fluid rounded hover-zoom" alt="{{ image.category }}">
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- ACRYLIC NAMEPLATES Grid -->
+        <div id="acrylic-nameplates" class="content-grid row">
+            {% for image in images %}
+            {% if image.category == "Acrylic nameplates" %}
+            <div class="images col-12 col-sm-6 col-md-4 mb-4 fade-in-image">
+                <img src="{{ image.photo.url }}" class="img-fluid rounded hover-zoom" alt="{{ image.category }}">
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- ACRYLIC PRODUCTS Grid -->
+        <div id="acrylic-products" class="content-grid row">
+            {% for image in images %}
+            {% if image.category == "Acrylic products" %}
+            <div class="images col-12 col-sm-6 col-md-4 mb-4 fade-in-image">
+                <img src="{{ image.photo.url }}" class="img-fluid rounded hover-zoom" alt="{{ image.category }}">
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+       
+        <div id="digital-printing" class="content-grid row">
+            {% for image in images %}
+            {% if image.category == "Digital printing" %}
+            <div class="images col-12 col-sm-6 col-md-4 mb-4 fade-in-image">
+                <img src="{{ image.photo.url }}" class="img-fluid rounded hover-zoom" alt="{{ image.category }}">
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div> 
