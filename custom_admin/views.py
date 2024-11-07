@@ -7,7 +7,6 @@ from employee.models import EmployeeProfile
 from django.contrib import messages
 from django.db.models import Q
 from django.conf import settings
-from django.core.mail import send_mail
 from datetime import datetime
 from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
@@ -168,29 +167,9 @@ def studentAddNotes(request):
                 
                 # Save notes to the database
                 assign_notes = StudentsNotes.objects.create(user_id=student_id, notes_title=notestitle, notes_pdf=notesfile)
-                
-                # Retrieve the student's email from the profile
-                student_profile = User.objects.get(id=student_id)
-                student_email = student_profile.email  # Assumes there's a related `User` model with an `email` field
-                
-                # Prepare and send the email
-                subject = 'New Notes Added to Your Profile'
-                message = f'''Hello {student_profile.username},
-
-    New notes titled "{notestitle}" have been added to your profile by the admin. 
-
-    You can now access these notes in your account.
-
-    Best regards,
-    The Team
-                '''
-                email_from = settings.EMAIL_HOST_USER
-                recipient_list = [student_email]
-                
-                send_mail(subject, message, email_from, recipient_list)
 
                 # Display a success message
-                messages.success(request, "Notes added successfully, and the student has been notified via email.")
+                messages.success(request, "Notes added successfully")
         except Exception as e:
             # Display an error message if something goes wrong
             messages.error(request, f"Some error occurred: {str(e)}")
@@ -213,25 +192,6 @@ def studentAssignTask(request):
             taskfile = request.FILES.get('taskfile')
             
             assign_task = StudentsTasks.objects.create(user_id=student_id , task_title=task_title, task_pdf=taskfile)
-            # Retrieve the student's email from the profile
-            student_profile = User.objects.get(id=student_id)
-            student_email = student_profile.email  # Assumes there's a related `User` model with an `email` field
-            
-            # Prepare and send the email
-            subject = 'New Notes Added to Your Profile'
-            message = f'''Hello {student_profile.username},
-
-New Task titled "{task_title}" have been assigned to you by the admin. 
-
-You can now check the task in your account.
-
-Best regards,
-The Team
-            '''
-            email_from = settings.EMAIL_HOST_USER
-            recipient_list = [student_email]
-            
-            send_mail(subject, message, email_from, recipient_list)
             messages.success(request, f"Task assigned successfully")
     except Exception as e:
         messages.error(request, f"Some error occurred {str(e)}")
