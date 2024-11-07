@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from datetime import datetime
 from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def admin_login(request):
@@ -47,148 +48,161 @@ def dashboard(request):
     return render(request, "custom_admin/dashboard.html", context=data)
 
 def addUser(request):
-    data = {}
-    if(request.method == "POST"):
-        username = request.POST['username']
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
-        email = request.POST['email']
-        password1 = request.POST['password1']
-        password2 = request.POST['password2']
-        
-        
-        if(username =="" or first_name == "" or last_name=="" or email == "" or password1 == "" or password2 == "" ):
-            messages.error(request, "All fileds are necessary")
-        elif(password1 != password2):
-            messages.error(request, "Password doesn't match")
-        elif(User.objects.filter(username=username).exists()):
-            messages.error(request, "Username already exists")
-        else:
-            user = User.objects.create(username=username, email=email, first_name=first_name, last_name=last_name)
-            user.set_password(password1)
-            user.save()
-            messages.success(request, "User Created successfully")
+    if request.user.is_authenticated:
+        data = {}
+        if(request.method == "POST"):
+            username = request.POST['username']
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            email = request.POST['email']
+            password1 = request.POST['password1']
+            password2 = request.POST['password2']
+            
+            
+            if(username =="" or first_name == "" or last_name=="" or email == "" or password1 == "" or password2 == "" ):
+                messages.error(request, "All fileds are necessary")
+            elif(password1 != password2):
+                messages.error(request, "Password doesn't match")
+            elif(User.objects.filter(username=username).exists()):
+                messages.error(request, "Username already exists")
+            else:
+                user = User.objects.create(username=username, email=email, first_name=first_name, last_name=last_name)
+                user.set_password(password1)
+                user.save()
+                messages.success(request, "User Created successfully")
+    else:
+        return redirect('/custom-admin/login')
     return render(request, "custom_admin/add_user.html", context=data)
 
 
 def add_student_profile(request):
-    data = {}
-    get_users = User.objects.all()
-    data['users'] = get_users
+    if request.user.is_authenticated:
+        data = {}
+        get_users = User.objects.all()
+        data['users'] = get_users
 
-    if request.method == "POST":
-        username = request.POST['username']
-        course_name = request.POST['course_name']
-        birth_date = request.POST['birth_date']
-        aadhaar_number = request.POST['addhar_number']
-        student_number = request.POST['student_number']
-        parent_number = request.POST['parent_number']
-        education = request.POST['education']
-        image = request.FILES['image']
-        remark = request.POST['remark']
-        total_fees = request.POST['total_fees']
-        paid_fees = request.POST['paid_fees']
-        pending_fees = request.POST['pending_fees']
-        fees_remark = request.POST['fees_remark']
-        if(StudentProfile.objects.filter(user_id=username).exists()):
-            messages.error(request, "Student Profile already exists")
-        else:
-            save_profile = StudentProfile.objects.create(user_id=username, course_name=course_name, remark=remark, birth_date=birth_date, aadhaar_number=aadhaar_number, phone=student_number, parent_number=parent_number, education=education, image=image)
+        if request.method == "POST":
+            username = request.POST['username']
+            course_name = request.POST['course_name']
+            birth_date = request.POST['birth_date']
+            aadhaar_number = request.POST['addhar_number']
+            student_number = request.POST['student_number']
+            parent_number = request.POST['parent_number']
+            education = request.POST['education']
+            image = request.FILES['image']
+            remark = request.POST['remark']
+            total_fees = request.POST['total_fees']
+            paid_fees = request.POST['paid_fees']
+            pending_fees = request.POST['pending_fees']
+            fees_remark = request.POST['fees_remark']
+            if(StudentProfile.objects.filter(user_id=username).exists()):
+                messages.error(request, "Student Profile already exists")
+            else:
+                save_profile = StudentProfile.objects.create(user_id=username, course_name=course_name, remark=remark, birth_date=birth_date, aadhaar_number=aadhaar_number, phone=student_number, parent_number=parent_number, education=education, image=image)
 
-            Fees.objects.create(
-                student_profile=save_profile, 
-                total_fees=total_fees,
-                paid_fees=paid_fees,
-                pending_fees=pending_fees,  
-                fees_remark=fees_remark,
-                installment_amount = paid_fees
-            )
-            messages.success(request, "Student Profile created sucessfully.")
+                Fees.objects.create(
+                    student_profile=save_profile, 
+                    total_fees=total_fees,
+                    paid_fees=paid_fees,
+                    pending_fees=pending_fees,  
+                    fees_remark=fees_remark,
+                    installment_amount = paid_fees
+                )
+                messages.success(request, "Student Profile created sucessfully.")
+    else:
+        return redirect('/custom-admin/login')
     return render(request, "custom_admin/admin_students/add_profile_student.html", context=data)
 
 def manage_student_profile(request):
-    data = {}
-    course = request.GET.get('course')
-    
-    # Get all student profiles based on search or course filter
-    get_student_profiles = StudentProfile.objects.all()
-    if course:
-        get_student_profiles = StudentProfile.objects.filter(course_name__icontains=course)
-    if request.method == "POST":
-        query = request.POST.get('search')
-        if query:
-            get_student_profiles = StudentProfile.objects.filter(
-                Q(user__username__icontains=query) |
-                Q(user__first_name__icontains=query) |
-                Q(user__last_name__icontains=query)
-            )
-    
-    # Adding fees details to each profile
-    profiles_with_fees = []
-    for profile in get_student_profiles:
-        # Assuming the `Fees` model has a foreign key to `StudentProfile` named `student_profile`
-        fees = Fees.objects.filter(student_profile=profile).last()
-        profiles_with_fees.append({
-            'profile': profile,
-            'paid_fees': fees.paid_fees if fees else 0,
-            'pending_fees': fees.pending_fees if fees else 0,
-            'total_fees': fees.total_fees if fees else 0,
-        })
-    
-    data['all_profiles'] = profiles_with_fees
+    if request.user.is_authenticated:
+        data = {}
+        course = request.GET.get('course')
+        
+        # Get all student profiles based on search or course filter
+        get_student_profiles = StudentProfile.objects.all()
+        if course:
+            get_student_profiles = StudentProfile.objects.filter(course_name__icontains=course)
+        if request.method == "POST":
+            query = request.POST.get('search')
+            if query:
+                get_student_profiles = StudentProfile.objects.filter(
+                    Q(user__username__icontains=query) |
+                    Q(user__first_name__icontains=query) |
+                    Q(user__last_name__icontains=query)
+                )
+        
+        # Adding fees details to each profile
+        profiles_with_fees = []
+        for profile in get_student_profiles:
+            # Assuming the `Fees` model has a foreign key to `StudentProfile` named `student_profile`
+            fees = Fees.objects.filter(student_profile=profile).last()
+            profiles_with_fees.append({
+                'profile': profile,
+                'paid_fees': fees.paid_fees if fees else 0,
+                'pending_fees': fees.pending_fees if fees else 0,
+                'total_fees': fees.total_fees if fees else 0,
+            })
+        
+        data['all_profiles'] = profiles_with_fees
+    else:
+        return redirect('/custom-admin/login')
     return render(request, "custom_admin/admin_students/manage_profile.html", context=data)
 
-
+@login_required(login_url='/custom-admin/login')
 def studentAddNotes(request):
-    data = {}
-    try:
-        # Retrieve all student profiles
-        getStudents = StudentProfile.objects.all()
-        data['students'] = getStudents
-        
-        if request.method == "POST":
-            # Retrieve data from the form
-            student_id = request.POST['studentname']
-            notestitle = request.POST['notestitle']
-            notesfile = request.FILES.get('notesfile')
+    if request.user.is_authenticated:
+        data = {}
+        try:
+            # Retrieve all student profiles
+            getStudents = StudentProfile.objects.all()
+            data['students'] = getStudents
             
-            # Debug print statement
-            print("=======>", student_id, notestitle, notesfile)
-            
-            # Save notes to the database
-            assign_notes = StudentsNotes.objects.create(user_id=student_id, notes_title=notestitle, notes_pdf=notesfile)
-            
-            # Retrieve the student's email from the profile
-            student_profile = User.objects.get(id=student_id)
-            student_email = student_profile.email  # Assumes there's a related `User` model with an `email` field
-            
-            # Prepare and send the email
-            subject = 'New Notes Added to Your Profile'
-            message = f'''Hello {student_profile.username},
+            if request.method == "POST":
+                # Retrieve data from the form
+                student_id = request.POST['studentname']
+                notestitle = request.POST['notestitle']
+                notesfile = request.FILES.get('notesfile')
+                
+                # Debug print statement
+                print("=======>", student_id, notestitle, notesfile)
+                
+                # Save notes to the database
+                assign_notes = StudentsNotes.objects.create(user_id=student_id, notes_title=notestitle, notes_pdf=notesfile)
+                
+                # Retrieve the student's email from the profile
+                student_profile = User.objects.get(id=student_id)
+                student_email = student_profile.email  # Assumes there's a related `User` model with an `email` field
+                
+                # Prepare and send the email
+                subject = 'New Notes Added to Your Profile'
+                message = f'''Hello {student_profile.username},
 
-New notes titled "{notestitle}" have been added to your profile by the admin. 
+    New notes titled "{notestitle}" have been added to your profile by the admin. 
 
-You can now access these notes in your account.
+    You can now access these notes in your account.
 
-Best regards,
-The Team
-            '''
-            email_from = settings.EMAIL_HOST_USER
-            recipient_list = [student_email]
+    Best regards,
+    The Team
+                '''
+                email_from = settings.EMAIL_HOST_USER
+                recipient_list = [student_email]
+                
+                send_mail(subject, message, email_from, recipient_list)
+
+                # Display a success message
+                messages.success(request, "Notes added successfully, and the student has been notified via email.")
+        except Exception as e:
+            # Display an error message if something goes wrong
+            messages.error(request, f"Some error occurred: {str(e)}")
+    else:
+        return redirect('/custom-admin/login')
             
-            send_mail(subject, message, email_from, recipient_list)
-
-            # Display a success message
-            messages.success(request, "Notes added successfully, and the student has been notified via email.")
-    except Exception as e:
-        # Display an error message if something goes wrong
-        messages.error(request, f"Some error occurred: {str(e)}")
-        
     return render(request, "custom_admin/admin_students/addNotes.html", context=data)
 
 
-
+@login_required(login_url='/custom-admin/login')
 def studentAssignTask(request):
+    
     data = {}
     try:
         getStudents = StudentProfile.objects.all()
@@ -223,6 +237,7 @@ The Team
         messages.error(request, f"Some error occurred {str(e)}")
     return render(request, "custom_admin/admin_students/assign_task.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def studentAssignTaskCheck(request):
     data = {}
     
@@ -243,14 +258,32 @@ def studentAssignTaskCheck(request):
 
     return render(request, "custom_admin/admin_students/check_tasks_student.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
+def deleteStudentTasks(request, id):
+    try:
+        get_task = get_object_or_404(StudentsTasks, id=id)
+        get_task.delete()
+        messages.success(request, "Task deleted successfully")
+        return redirect("/custom-admin/students/check-task/")
+    except:
+        messages.error(request, "Some error occurred")
+        return redirect("/custom-admin/students/check-task/")
+
+
+
+@login_required(login_url='/custom-admin/login')
 def view_profile_student(request, user_id):
     data={}
+    user = get_object_or_404(User, id=user_id)
     get_user = StudentProfile.objects.get(user_id = user_id)
+    get_fees = Fees.objects.get(student_profile__user=user)
     data['student'] = get_user
+    data['total_fees'] = get_fees
     if not get_user.image:
         get_user.image = f"{settings.STATIC_URL}default_profile.jpg"
     return render(request, "custom_admin/admin_students/view_profile.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def edit_profile_student(request, user_id):
     data={}
     try:
@@ -278,6 +311,7 @@ def edit_profile_student(request, user_id):
          messages.error(request, "error occurred ")
     return render(request, "custom_admin/admin_students/edit_profile.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def update_student_fees(request, user_id):
     user = get_object_or_404(User, id=user_id)
     last_fee_record = Fees.objects.filter(student_profile__user=user).order_by('-id').first()
@@ -332,6 +366,7 @@ def student_fees_history(request, user_id):
     }
     return render(request, "custom_admin/admin_students/fees_history.html", context)
 
+@login_required(login_url='/custom-admin/login')
 def delete_student_profile(request, user_id):
     try:
         # Get and delete the user from auth_user
@@ -349,6 +384,7 @@ def delete_student_profile(request, user_id):
 
 
 # interns
+@login_required(login_url='/custom-admin/login')
 def add_intern_profile(request):
     data = {}
     get_users = User.objects.all()
@@ -386,6 +422,7 @@ def add_intern_profile(request):
             messages.success(request, "Profile created sucessfully.")
     return render(request, "custom_admin/admin_interns/add_profile_intern.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def manage_interns_profile(request):
     data = {}
     course = request.GET.get('course')
@@ -418,6 +455,7 @@ def manage_interns_profile(request):
     data['all_profiles'] = profiles_with_fees
     return render(request, "custom_admin/admin_interns/manage_profile.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def view_profile_intern(request, user_id):
     data={}
     get_user = InternProfile.objects.get(user_id = user_id)
@@ -427,6 +465,8 @@ def view_profile_intern(request, user_id):
     
     return render(request, "custom_admin/admin_interns/view_profile.html", context=data)
 
+
+@login_required(login_url='/custom-admin/login')
 def edit_profile_intern(request, user_id):
     data={}
     try:
@@ -457,6 +497,7 @@ def edit_profile_intern(request, user_id):
        
     return render(request, "custom_admin/admin_interns/edit_profile_intern.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def update_intern_fees(request, user_id):
     user = get_object_or_404(User, id=user_id)
     last_fee_record = FeesIntern.objects.filter(intern_profile__user=user).order_by('-id').first()
@@ -498,6 +539,7 @@ def update_intern_fees(request, user_id):
     }
     return render(request, "custom_admin/admin_interns/update_fees.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def delete_intern_profile(request, user_id):
     try:
         # Get and delete the user from auth_user
@@ -513,6 +555,7 @@ def delete_intern_profile(request, user_id):
         messages.error(request, f"An error occurred: {str(e)}")
     return redirect("/custom-admin/interns/manage-profiles/")
 
+@login_required(login_url='/custom-admin/login')
 def intern_fees_history(request, user_id):
     # Get the user object
     user = get_object_or_404(User, id=user_id)
@@ -527,6 +570,7 @@ def intern_fees_history(request, user_id):
     }
     return render(request, "custom_admin/admin_interns/fees_history.html", context)
 
+@login_required(login_url='/custom-admin/login')
 def internAddNotes(request):
     data = {}
     try:
@@ -546,6 +590,7 @@ def internAddNotes(request):
         messages.error(request, f"Some error occurred {str(e)}")
     return render(request, "custom_admin/admin_interns/add_notes.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def internAssignProject(request):
     data = {}
     try:
@@ -562,7 +607,7 @@ def internAssignProject(request):
         messages.error(request, f"Some error occurred {str(e)}")
     return render(request, "custom_admin/admin_interns/intern_project.html", context=data)
 
-
+@login_required(login_url='/custom-admin/login')
 def internAssignTasks(request):
     # pass the InternProfile names to the template
     # get the data from the template  
@@ -585,6 +630,7 @@ def internAssignTasks(request):
         messages.error(request, f"Error Occurred {str(e)}")
     return render(request, "custom_admin/admin_interns/assign_tasks.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def internCheckTask(request):
     data = {}
     
@@ -604,6 +650,21 @@ def internCheckTask(request):
     data['tasks'] = tasks    
     return render(request, "custom_admin/admin_interns/check_tasks.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
+def deleteTaskIntern(request, id):
+    try:
+
+        get_task = get_object_or_404(InternTasks, id=id)
+        get_task.delete()
+        messages.success(request, "Task deleted successfully")
+        return redirect("/custom-admin/interns/check-tasks/")
+       
+    except:
+        messages.error(request, "Some error occurred")
+        return redirect("/custom-admin/interns/check-tasks/")
+     
+
+@login_required(login_url='/custom-admin/login')
 def internCheckProjects(request):
     data = {}
     
@@ -623,7 +684,22 @@ def internCheckProjects(request):
     data['projects'] = projects    
     return render(request, "custom_admin/admin_interns/check_projects.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
+def deleteProjectIntern(request, id):
+    try:
+
+        get_project = get_object_or_404(InternProject, id=id)
+        get_project.delete()
+        messages.success(request, "Project deleted successfully")
+        return redirect("/custom-admin/interns/check-projects/")
+       
+    except:
+        messages.error(request, "Some error occurred")
+        return redirect("/custom-admin/interns/check-projects/")
+    
+
 # employee
+@login_required(login_url='/custom-admin/login')
 def add_employee_profile(request):
     data = {}
     get_users = User.objects.all()
@@ -647,6 +723,7 @@ def add_employee_profile(request):
             messages.success(request, "Profile created sucessfully.")
     return render(request, "custom_admin/admin_employees/add_profile_employee.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def manage_employee_profile(request):
     data={}
     course = request.GET.get('course')
@@ -665,6 +742,7 @@ def manage_employee_profile(request):
     data['all_profiles'] = get_employee_profiles
     return render(request, "custom_admin/admin_employees/manage_profile_employee.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def view_profile_employee(request, user_id):
     data={}
     get_user = EmployeeProfile.objects.get(user_id = user_id)
@@ -674,6 +752,7 @@ def view_profile_employee(request, user_id):
         get_user.image = f"{settings.STATIC_URL}default_profile.jpg"
     return render(request, "custom_admin/admin_employees/view_profile_employee.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def edit_profile_employee(request, user_id):
     data = {}
     try:
@@ -710,6 +789,7 @@ def edit_profile_employee(request, user_id):
 
     return render(request, "custom_admin/admin_employees/edit_profile_employee.html", context=data)
 
+@login_required(login_url='/custom-admin/login')
 def salary_details(request):
     data = {}
     get_employee = EmployeeProfile.objects.all()
@@ -736,7 +816,8 @@ def salary_details(request):
     data['current_year'] = current_year
     
     return render(request, "custom_admin/admin_employees/salary_details.html", context=data)
-
+    
+@login_required(login_url='/custom-admin/login')
 def delete_employee(request, user_id):
     try:
         # Get and delete the user from auth_user
