@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from interns.models import InternProfile, InternTasks, InternNotes, InternProject
+from interns.models import InternProfile, InternTasks, InternNotes, InternProject, FeesIntern
 from django.contrib import messages
 
 # Create your views here.
@@ -114,7 +114,7 @@ def internProject(request):
 
 def internFees(request):
     data={}
-    get_intern_fees = InternProfile.objects.get(user=request.user)
+    get_intern_fees = FeesIntern.objects.filter(intern_profile_id__user=request.user).last()
     print(get_intern_fees)
     data['fees'] = get_intern_fees   
     return render(request, 'intern/fees.html', context=data)

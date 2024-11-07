@@ -1,5 +1,5 @@
 from django.shortcuts import render # type: ignore
-from students.models import StudentProfile, StudentsTasks, StudentsNotes
+from students.models import StudentProfile, StudentsTasks, StudentsNotes, Fees
 from django.contrib.auth.models import User
 from django.contrib import messages
 
@@ -53,7 +53,7 @@ def studentProfile(request):
 
 def studentfeesDetails(request):
     data={}
-    get_user_fees = StudentProfile.objects.get(user=request.user)
+    get_user_fees = Fees.objects.filter(student_profile_id__user=request.user).last()
     print(get_user_fees)
     data['fees'] = get_user_fees   
     return render(request, "students/fees.html", context=data)
